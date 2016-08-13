@@ -1,6 +1,7 @@
+(function () { 
 'use strict';
 
-angular.module('login', ['ngRoute'])
+angular.module('planner.login', ['ngRoute'])
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login', {
@@ -9,6 +10,9 @@ angular.module('login', ['ngRoute'])
     });
   }])
 
-  .controller('LoginCtrl', ['$scope', function($scope){
-
+  .controller('LoginCtrl', ['$scope', function($scope) {
+    $scope.username = '';
+    $scope.password = '';
   }]);
+
+})();

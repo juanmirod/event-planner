@@ -7,15 +7,11 @@ var LessAutoprefix = require('less-plugin-autoprefix');
 var browserSync = require('browser-sync').create();
 var autoprefix = new LessAutoprefix({ browsers: ['last 2 versions'] });
 var mainBowerFiles = require('main-bower-files');
-
-browserSync.init({
-  server: './public/'
-});
+var jasmine = require('gulp-jasmine-phantom');
 
 gulp.task('reload', function(){
     browserSync.reload();
 });
-
 
 gulp.task('bower', function() {
  gulp.src(mainBowerFiles(), {
@@ -48,7 +44,7 @@ gulp.task('styles', ['bootstrap:compile', 'customStyles']);
 
 gulp.task('buildjs', function() {
 
-  gulp.src('js/**/*.js')
+  gulp.src('js/**/!(*_test).js')
     .pipe(concat('app.js'))
     .pipe(gulp.dest('./public/js'));
 
@@ -59,6 +55,7 @@ gulp.task('buildjs', function() {
     'bower_components/angular/angular.js',
     'bower_components/angular-animate/angular-animate.js',
     'bower_components/angular-route/angular-route.js',
+    'bower_components/angular-local-storage/dist/angular-local-storage.js',
     'bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
     ])
     .pipe(concat('vendor.js'))
@@ -66,7 +63,31 @@ gulp.task('buildjs', function() {
 
 });
 
+gulp.task('tests', ['buildjs'], function () {
+  
+  gulp.src([
+    'public/js/vendor.js',
+    'bower_components/angular-mocks/angular-mocks.js', 
+    'public/js/app.js', 
+    'js/**/*_test.js'
+  ])
+  .pipe(jasmine({
+    integration: true,
+  }));
+
+});
+
+gulp.task('testrunner', ['tests'], function() {
+
+  gulp.watch('js/**/*.js', ['tests']);
+
+})
+
 gulp.task('default', ['styles', 'buildjs'], function() {
+
+  browserSync.init({
+    server: './public/'
+  });
 
   gulp.watch('less/**/*.less', ['styles']);
 

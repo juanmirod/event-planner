@@ -1,3 +1,4 @@
+(function () {    
 'use strict';
 
 // Declare app level module which depends on views, and components
@@ -6,18 +7,22 @@ angular.module('planner', [
   'ngAnimate',
   'ui.bootstrap.collapse',
   'ui.bootstrap.tpls',
-  'login'
-]).
+  'LocalStorageModule',
+  'planner.login'
+])
 
-config(['$locationProvider', '$routeProvider',
-  function($locationProvider, $routeProvider) {
+.config(['$locationProvider', '$routeProvider', 'localStorageServiceProvider',
+  function($locationProvider, $routeProvider, localStorageServiceProvider) {
     
     $locationProvider.hashPrefix('!');
     $routeProvider.otherwise({redirectTo: '/'});
 
-  }]).
+    localStorageServiceProvider
+      .setPrefix('planner');
 
-controller('AppController', ['$scope', 
+  }])
+
+.controller('AppController', ['$scope', 
   function($scope){
     
     $scope.isCollapsed = true;
@@ -28,9 +33,12 @@ controller('AppController', ['$scope',
     });
 
   }]);
+
+})();
+(function () { 
 'use strict';
 
-angular.module('login', ['ngRoute'])
+angular.module('planner.login', ['ngRoute'])
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login', {
@@ -39,6 +47,9 @@ angular.module('login', ['ngRoute'])
     });
   }])
 
-  .controller('LoginCtrl', ['$scope', function($scope){
-
+  .controller('LoginCtrl', ['$scope', function($scope) {
+    $scope.username = '';
+    $scope.password = '';
   }]);
+
+})();

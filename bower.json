@@ -23,7 +23,8 @@
     "bootswatch-dist": "cosmo",
     "angular-animate": "^1.5.6",
     "angular-local-storage": "^0.2.7",
-    "angular-route": "^1.5.8"
+    "angular-route": "^1.5.8",
+    "angular-mocks": "^1.5.8"
   },
   "overrides": {
     "bootstrap": {
