@@ -52,6 +52,9 @@ gulp.task('buildjs', function() {
     .pipe(concat('app.js'))
     .pipe(gulp.dest('./public/js'));
 
+  gulp.src('js/**/*.html')
+    .pipe(gulp.dest('./public/js'));
+
   gulp.src([
     'bower_components/angular/angular.js',
     'bower_components/angular-animate/angular-animate.js',
@@ -67,9 +70,12 @@ gulp.task('default', ['styles', 'buildjs'], function() {
 
   gulp.watch('less/**/*.less', ['styles']);
 
+  gulp.watch('js/**/*.*', ['buildjs']);
+
   gulp.watch([
     'public/lib/bootstrap/dist/css/*.css',
-    'js/**/*.js',
+    'public/js/**/*.js',
+    'public/js/**/*.html',
     'public/index.html'
     ], ['reload']);
 

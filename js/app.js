@@ -1,18 +1,19 @@
 'use strict';
 
 // Declare app level module which depends on views, and components
-angular.module('myApp', [
+angular.module('planner', [
   'ngRoute',
   'ngAnimate',
   'ui.bootstrap.collapse',
   'ui.bootstrap.tpls',
+  'login'
 ]).
 
 config(['$locationProvider', '$routeProvider',
   function($locationProvider, $routeProvider) {
     
     $locationProvider.hashPrefix('!');
-    $routeProvider.otherwise({redirectTo: '/about'});
+    $routeProvider.otherwise({redirectTo: '/'});
 
   }]).
 
