@@ -31,6 +31,9 @@
           <div class="form-group">
             <button id="loginSubmit" class="btn btn-primary" ng-click="submitHandler()">Submit</button>
           </div>
+          <div ng-if="error" class="alert alert-danger">
+            <p>{{ error }}</p>
+          </div>
         </form>
       </div>
     </div> 

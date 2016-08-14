@@ -16,7 +16,7 @@
 
     $scope.submitHandler = function() {
       if($scope.username == '' || $scope.password == '') {
-        $scope.error = 'Please fill in the username and password';
+        $scope.error = 'Please fill in the username and password fields';
         return false;
       }
 
@@ -25,7 +25,8 @@
           $scope.id = response.data.id;
         })
         .catch(function authFailHandler(error) {
-          $scope.error = error.data.message;
+          $scope.authError = 'There was an error trying to authenticate the user ';
+          $scope.error = $scope.authError + error.data;
         });
     }
   }]);

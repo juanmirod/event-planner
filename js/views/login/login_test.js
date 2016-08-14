@@ -64,13 +64,13 @@ describe('planner.login module', function() {
       
       var error = 'User not found';
 
-      $httpBackend.expectPOST('/auth', {username: 'a', password: 'b'}).respond(404, {message: error});
+      $httpBackend.expectPOST('/auth', {username: 'a', password: 'b'}).respond(404, error);
       $scope.username = 'a';
       $scope.password = 'b';
       $scope.submitHandler();
       $httpBackend.flush();
       
-      expect($scope.error).toBe(error);
+      expect($scope.error).toBe($scope.authError + error);
     
     });
 
