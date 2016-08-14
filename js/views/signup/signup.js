@@ -1,7 +1,7 @@
 (function () { 
 'use strict';
 
-  angular.module('planner.signup', ['ngRoute'])
+  angular.module('planner.signup', ['ngRoute', 'planner.validators'])
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/signup', {
@@ -15,7 +15,9 @@
     $scope.email = '';
     $scope.password = '';
 
-    var validate = function validationHandler() {
+    console.log($scope);
+
+    /*var validate = function validationHandler() {
       //TODO:: do real validation, just checking that something is passed
       if($scope.name == '' || $scope.email == '' || $scope.password == '') {
         $scope.error = 'Please fill in the username and password fields';
@@ -23,13 +25,13 @@
       }
 
       return true;
-    };
+    };*/
 
     $scope.submitHandler = function() {
       
-      if(!validate()) {
+      /*if(!validate()) {
         return false;
-      }
+      }*/
 
       var userdata = {
         name: $scope.name,
@@ -46,6 +48,7 @@
           $scope.error = $scope.authError + error.data;
         });
     }
+
   }]);
 
 })();

@@ -9,7 +9,7 @@ angular.module('planner', [
   'ui.bootstrap.tpls',
   'LocalStorageModule',
   'planner.login',
-  'planner.signup'
+  'planner.signup',
 ])
 
 .config(['$locationProvider', '$routeProvider', 'localStorageServiceProvider',
@@ -24,7 +24,7 @@ angular.module('planner', [
   }])
 
 .controller('AppController', ['$scope', 
-  function($scope){
+  function($scope) {
     
     $scope.isCollapsed = true;
 

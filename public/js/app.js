@@ -9,7 +9,7 @@ angular.module('planner', [
   'ui.bootstrap.tpls',
   'LocalStorageModule',
   'planner.login',
-  'planner.signup'
+  'planner.signup',
 ])
 
 .config(['$locationProvider', '$routeProvider', 'localStorageServiceProvider',
@@ -24,7 +24,7 @@ angular.module('planner', [
   }])
 
 .controller('AppController', ['$scope', 
-  function($scope){
+  function($scope) {
     
     $scope.isCollapsed = true;
 
@@ -34,6 +34,67 @@ angular.module('planner', [
     });
 
   }]);
+
+})();
+(function () {
+   
+   angular.module('planner.validators', [])
+
+   .directive('password', function(){
+      return {
+        require: 'ngModel',
+        link: function(scope, elem, attrs, ctrl) {
+
+          scope.valid = true;
+          
+
+          ctrl.$validators.password = function(modelValue, viewValue) {
+            
+            scope.passwordErrorMessages = [];
+
+            var addErrorMessage = function(message) {
+              scope.passwordErrorMessages.push(message);
+            }
+
+            if(ctrl.$isEmpty(modelValue)) {
+              return true;
+            }
+                        
+            if(viewValue.match(/[^A-z0-9\\!\\@\\#\\$\\%\\^\\&\\*]/)) {
+              addErrorMessage('The password constains illegal characters.');
+              scope.valid = false;
+            }
+
+            if(viewValue.length < 10 || viewValue.length > 100) {
+              addErrorMessage('The password must be between 10 and 100 characters long.');
+              scope.valid = false;
+            }
+
+            // Check for characters that the password must contain, 
+            // this could be written like the other conditions above,
+            // but this way is shorter
+            var mustContain = [
+              ['[\\!\\@\\#\\$\\%\\^\\&\\*]', 'It must contain at least one of this symbols: !@#$%^&*'],
+              ['\\d', 'It must contain a number'],
+              ['[a-z]', 'It must contain a lowercase character'],
+              ['[A-Z]', 'It must contain an uppercase character'],
+            ];
+
+            mustContain.forEach(function(constraint) {
+
+              var regex = new RegExp(constraint[0],"g");
+              if (!regex.test(viewValue)) {
+                addErrorMessage(constraint[1]);
+                scope.valid = false;
+              }
+
+            });
+            
+            return scope.valid;
+          }
+        }  
+      }
+   }); 
 
 })();
 (function () { 
@@ -73,7 +134,7 @@ angular.module('planner', [
 (function () { 
 'use strict';
 
-  angular.module('planner.signup', ['ngRoute'])
+  angular.module('planner.signup', ['ngRoute', 'planner.validators'])
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/signup', {
@@ -87,7 +148,9 @@ angular.module('planner', [
     $scope.email = '';
     $scope.password = '';
 
-    var validate = function validationHandler() {
+    console.log($scope);
+
+    /*var validate = function validationHandler() {
       //TODO:: do real validation, just checking that something is passed
       if($scope.name == '' || $scope.email == '' || $scope.password == '') {
         $scope.error = 'Please fill in the username and password fields';
@@ -95,13 +158,13 @@ angular.module('planner', [
       }
 
       return true;
-    };
+    };*/
 
     $scope.submitHandler = function() {
       
-      if(!validate()) {
+      /*if(!validate()) {
         return false;
-      }
+      }*/
 
       var userdata = {
         name: $scope.name,
@@ -118,6 +181,7 @@ angular.module('planner', [
           $scope.error = $scope.authError + error.data;
         });
     }
+
   }]);
 
 })();

@@ -7,7 +7,7 @@
       <div class="panel-heading">Sign up form</div>
       <div class="panel-body">
         <h3>Just the bare minimun info to get your account</h3>
-        <form class="form" action="">
+        <form name="form" class="form" novalidate>
           <div class="form-group">
             <label for="username">Full name
             </label>
@@ -19,28 +19,35 @@
                     required
                     autocomplete="name">
           </div>
-          <div class="form-group">
+          <div class="form-group" ng-class="{'has-error': form.email.$dirty && !form.email.$valid}">
             <label for="email">
               E-mail
             </label>
             <input type="email" 
                    class="form-control"
                    placeholder="email@sample.com"
-                   id="email"
+                   name="email"
                    ng-model="email"
                    required
                    autocomplete="email">
+            <span class="help-block" ng-show="form.email.$dirty && !form.email.$valid">
+              This is not a valid email format, sample email: sample.email@domain.com  
+            </span>
           </div>
-          <div class="form-group">
+          <div class="form-group" 
+               ng-class="{'has-error': form.password.$dirty && !form.password.$valid }">
             <label for="password">
               Password
             </label>
             <input type="password" 
                    class="form-control"
                    placeholder="********"
-                   id="password"
+                   name="password"
                    ng-model="password"
-                   required>
+                   password>
+              <span class="help-block" ng-show="form.password.$dirty && form.password.$error" ng-repeat="message in passwordErrorMessages">
+              {{ message }}
+              </span>
           </div>
           <h3>Tell the community a bit more about you</h3>
           <div class="form-group">
@@ -55,9 +62,6 @@
           </div>
           <div class="form-group">
             <button id="loginSubmit" class="btn btn-primary" ng-click="submitHandler()">Submit</button>
-          </div>
-          <div ng-if="error" class="alert alert-danger">
-            <p>{{ error }}</p>
           </div>
         </form>
       </div>
