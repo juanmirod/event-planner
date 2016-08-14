@@ -10,6 +10,8 @@ angular.module('planner', [
   'LocalStorageModule',
   'planner.login',
   'planner.signup',
+  'planner.home',
+  'firebase'
 ])
 
 .config(['$locationProvider', '$routeProvider', 'localStorageServiceProvider',

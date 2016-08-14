@@ -82,9 +82,11 @@ gulp.task('buildjs', function() {
     .pipe(gulp.dest('./public/js'));
 
   gulp.src([
+    'bower_components/firebase/firebase.js',
     'bower_components/angular/angular.js',
     'bower_components/angular-animate/angular-animate.js',
     'bower_components/angular-route/angular-route.js',
+    'bower_components/angularfire/dist/angularfire.js',
     'bower_components/angular-local-storage/dist/angular-local-storage.js',
     'bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
     ])
