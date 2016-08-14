@@ -11,16 +11,16 @@
   }])
 
   .controller('LoginCtrl', ['$scope', '$http', function($scope, $http) {
-    $scope.username = '';
+    $scope.email = '';
     $scope.password = '';
 
     $scope.submitHandler = function() {
-      if($scope.username == '' || $scope.password == '') {
+      if($scope.email == '' || $scope.password == '') {
         $scope.error = 'Please fill in the username and password fields';
         return false;
       }
 
-      $http.post('/auth', {username: $scope.username, password: $scope.password})
+      $http.post('/auth', {email: $scope.email, password: $scope.password})
         .then(function authHandler(response) {
           $scope.id = response.data.id;
         })

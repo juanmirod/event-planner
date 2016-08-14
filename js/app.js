@@ -8,7 +8,8 @@ angular.module('planner', [
   'ui.bootstrap.collapse',
   'ui.bootstrap.tpls',
   'LocalStorageModule',
-  'planner.login'
+  'planner.login',
+  'planner.signup'
 ])
 
 .config(['$locationProvider', '$routeProvider', 'localStorageServiceProvider',

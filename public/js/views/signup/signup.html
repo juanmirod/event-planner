@@ -1,0 +1,66 @@
+<div class="row">
+  <h2 class="col-xs-12">Sign up</h2>
+</div>
+<div class="row">
+  <div class="col-sm-4 col-sm-offset-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">Sign up form</div>
+      <div class="panel-body">
+        <h3>Just the bare minimun info to get your account</h3>
+        <form class="form" action="">
+          <div class="form-group">
+            <label for="username">Full name
+            </label>
+            <input  type="text" 
+                    class="form-control" 
+                    placeholder="your name" 
+                    id="name"
+                    ng-model="name"
+                    required
+                    autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="email">
+              E-mail
+            </label>
+            <input type="email" 
+                   class="form-control"
+                   placeholder="email@sample.com"
+                   id="email"
+                   ng-model="email"
+                   required
+                   autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="password">
+              Password
+            </label>
+            <input type="password" 
+                   class="form-control"
+                   placeholder="********"
+                   id="password"
+                   ng-model="password"
+                   required>
+          </div>
+          <h3>Tell the community a bit more about you</h3>
+          <div class="form-group">
+            <label for="bio">
+              Bio (optional)
+            </label>
+            <textarea class="form-control"
+                      placeholder="You can write your about your day job, company, and anything you consider relevant."
+                      id="bio"
+                      ng-model="bio">
+            </textarea>
+          </div>
+          <div class="form-group">
+            <button id="loginSubmit" class="btn btn-primary" ng-click="submitHandler()">Submit</button>
+          </div>
+          <div ng-if="error" class="alert alert-danger">
+            <p>{{ error }}</p>
+          </div>
+        </form>
+      </div>
+    </div> 
+  </div>
+</div>

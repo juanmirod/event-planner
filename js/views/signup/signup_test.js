@@ -1,7 +1,7 @@
-describe('planner.login module', function() {
+describe('planner.signup module', function() {
 'use strict';
 
-  beforeEach(module('planner.login'));
+  beforeEach(module('planner.signup'));
 
   var $controller, $rootScope, $scope, $httpBackend;
 
@@ -13,7 +13,7 @@ describe('planner.login module', function() {
     $controller = $injector.get('$controller');
     $httpBackend = $injector.get('$httpBackend');
 
-    $controller('LoginCtrl', {'$scope': $scope});
+    $controller('SignupCtrl', {'$scope': $scope});
   
   }));
 
@@ -24,9 +24,15 @@ describe('planner.login module', function() {
   
   });
 
-  describe('login controller', function(){
+  describe('signup controller', function(){
 
-    it('should contain a model for username', function() {
+    it('should contain a model for name', function() {
+    
+      expect($scope.email).toBeDefined();
+    
+    });
+
+    it('should contain a model for email', function() {
     
       expect($scope.email).toBeDefined();
     
@@ -38,19 +44,20 @@ describe('planner.login module', function() {
     
     });
 
-    it('should check that email and password exists on submit', function() {
+    it('should validate the form data on submit', function() {
     
-      $scope.email = '';
-      $scope.password = '';
       $scope.submitHandler();
       expect($scope.error).toBeDefined();
     
     });
 
-    it('should do a http request on submit to check the user', function() {
+    it('should do a http request on submit to create the user', function() {
     
-      $httpBackend.expectPOST('/auth', {email: 'a', password: 'b'}).respond(200, {id: 1});
+      $httpBackend
+        .expectPOST('/signup', {name: 'a', email: 'a', password: 'b'})
+        .respond(200, {id: 1});
     
+      $scope.name = 'a';
       $scope.email = 'a';
       $scope.password = 'b';
       $scope.submitHandler();
@@ -60,11 +67,15 @@ describe('planner.login module', function() {
     
     });
 
-    it('should return an error message on auth failed', function() {
+    it('should return an error message when signup failed', function() {
       
-      var error = 'User not found';
+      var error = 'Server error';
 
-      $httpBackend.expectPOST('/auth', {email: 'a', password: 'b'}).respond(404, error);
+      $httpBackend
+        .expectPOST('/signup', {name: 'a', email: 'a', password: 'b'})
+        .respond(500, error);
+
+      $scope.name = 'a';
       $scope.email = 'a';
       $scope.password = 'b';
       $scope.submitHandler();
