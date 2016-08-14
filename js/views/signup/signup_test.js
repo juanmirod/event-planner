@@ -26,41 +26,28 @@ describe('planner.signup module', function() {
 
   describe('signup controller', function(){
 
-    it('should contain a model for name', function() {
-    
-      expect($scope.email).toBeDefined();
-    
+    var form;
+
+    beforeEach(function(){
+      form = {$valid: true};
     });
 
-    it('should contain a model for email', function() {
+    it('should do nothing if the form is not valid', function() {
     
-      expect($scope.email).toBeDefined();
-    
-    });
+      form.$valid = false;  
+      $scope.submitHandler(form);
 
-    it('should contain a model for password', function() {
-    
-      expect($scope.password).toBeDefined();
-    
-    });
-
-    it('should validate the form data on submit', function() {
-    
-      $scope.submitHandler();
-      expect($scope.error).toBeDefined();
-    
     });
 
     it('should do a http request on submit to create the user', function() {
     
+      $scope.user = {name: 'a', email: 'a', password: 'b'};
+
       $httpBackend
-        .expectPOST('/signup', {name: 'a', email: 'a', password: 'b'})
+        .expectPOST('/signup', $scope.user)
         .respond(200, {id: 1});
     
-      $scope.name = 'a';
-      $scope.email = 'a';
-      $scope.password = 'b';
-      $scope.submitHandler();
+      $scope.submitHandler(form);
       $httpBackend.flush();
     
       expect($scope.id).toBe(1);
@@ -70,15 +57,13 @@ describe('planner.signup module', function() {
     it('should return an error message when signup failed', function() {
       
       var error = 'Server error';
+      $scope.user = {name: 'a', email: 'a', password: 'b'};
 
       $httpBackend
-        .expectPOST('/signup', {name: 'a', email: 'a', password: 'b'})
+        .expectPOST('/signup', $scope.user)
         .respond(500, error);
 
-      $scope.name = 'a';
-      $scope.email = 'a';
-      $scope.password = 'b';
-      $scope.submitHandler();
+      $scope.submitHandler(form);
       $httpBackend.flush();
       
       expect($scope.error).toBe($scope.authError + error);

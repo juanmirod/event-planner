@@ -9,8 +9,6 @@
   };
   
   firebase.initializeApp(config);
-
-  //console.log(firebase.database().ref());
   
   /*
   Firebase constants and service initialization

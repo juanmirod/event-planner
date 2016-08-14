@@ -49,8 +49,6 @@ angular.module('planner', [
   };
   
   firebase.initializeApp(config);
-
-  //console.log(firebase.database().ref());
   
   /*
   Firebase constants and service initialization
@@ -95,12 +93,10 @@ angular.module('planner', [
         require: 'ngModel',
         link: function(scope, elem, attrs, ctrl) {
 
-          scope.valid = true;
-          
-
           ctrl.$validators.password = function(modelValue, viewValue) {
             
             scope.passwordErrorMessages = [];
+            scope.valid = true;
 
             var addErrorMessage = function(message) {
               scope.passwordErrorMessages.push(message);
@@ -213,42 +209,21 @@ angular.module('planner', [
   }])
 
   .controller('SignupCtrl', ['$scope', '$http', function($scope, $http) {
-    $scope.name = '';
-    $scope.email = '';
-    $scope.password = '';
 
-    console.log($scope);
+    $scope.submitHandler = function(form) {
 
-    /*var validate = function validationHandler() {
-      //TODO:: do real validation, just checking that something is passed
-      if($scope.name == '' || $scope.email == '' || $scope.password == '') {
-        $scope.error = 'Please fill in the username and password fields';
-        return false;
-      }
-
-      return true;
-    };*/
-
-    $scope.submitHandler = function() {
+      if(form.$valid) {
       
-      /*if(!validate()) {
-        return false;
-      }*/
-
-      var userdata = {
-        name: $scope.name,
-        email: $scope.email,
-        password: $scope.password
-      };
-
-      $http.post('/signup', userdata)
-        .then(function authHandler(response) {
-          $scope.id = response.data.id;
-        })
-        .catch(function authFailHandler(error) {
-          $scope.authError = 'There was an error trying to authenticate the user ';
-          $scope.error = $scope.authError + error.data;
-        });
+        $http.post('/signup', $scope.user)
+          .then(function authHandler(response) {
+            $scope.id = response.data.id;
+          })
+          .catch(function authFailHandler(error) {
+            $scope.authError = 'There was an error trying to authenticate the user ';
+            $scope.error = $scope.authError + error.data;
+          });
+      
+      }
     }
 
   }]);

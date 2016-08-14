@@ -7,12 +7,10 @@
         require: 'ngModel',
         link: function(scope, elem, attrs, ctrl) {
 
-          scope.valid = true;
-          
-
           ctrl.$validators.password = function(modelValue, viewValue) {
             
             scope.passwordErrorMessages = [];
+            scope.valid = true;
 
             var addErrorMessage = function(message) {
               scope.passwordErrorMessages.push(message);
