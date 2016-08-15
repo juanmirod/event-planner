@@ -1,9 +1,8 @@
-<h1>Join an event: meet people, share, learn</h1>
 
-<h2>Browse all events</h2>
-<div>
+<div class="heading-map">
+  <h1>Join an event: meet people, share, learn</h1>
   <h3>Next events on the world</h3>
-  <ng-map center="[32, -20]" zoom="2">
+  <ng-map class="map" center="[32, -20]" zoom="2">
     <marker ng-repeat="event in events" 
       position="{{ event.location }}"
       animation="DROP"

@@ -1,7 +1,25 @@
 body {
   padding-top: 60px;
+  background-image: url('../img/legocrowd.jpg');
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+.heading-map {
+  color: #ffffff;
+  background-color: rgba(50, 50, 50, 0.5);
+  border-radius: 2px;
+  height: 470px;
+  padding: 20px;
+}
+.heading-map .map {
+  height: 280px !important;
 }
 .panel .panel-heading .date {
   padding: 5px;
   border-radius: 2px;
+}
+@media (min-width: 768px) {
+  .map {
+    height: 300px !important;
+  }
 }
