@@ -6,13 +6,19 @@
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
       templateUrl: 'js/views/home/home.html',
-      controller: 'HomeCtrl'
+      controller: 'HomeCtrl',
+      resolve: {
+        // controller will not be loaded until $waitForSignIn resolves
+        "currentAuth": ["Auth", function(Auth) {
+          return Auth.$waitForSignIn();
+        }]
+      }
     });
   }])
 
-  .controller('HomeCtrl', ['$scope', 'Users', function($scope, Users) {
+  .controller('HomeCtrl', ['$rootScope', 'Users', 'currentAuth', function($rootScope, Users, currentAuth) {
 
-    $scope.user = Users.get('juanmi');
+    $rootScope.authUser = currentAuth;
 
   }]);
 

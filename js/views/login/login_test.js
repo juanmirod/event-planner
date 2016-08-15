@@ -3,7 +3,7 @@ describe('planner.login module', function() {
 
   beforeEach(module('planner.login'));
 
-  var $controller, $rootScope, $scope, $httpBackend;
+  var $controller, $rootScope, $scope, $httpBackend, $auth;
 
   beforeEach(inject(function($injector){
   
@@ -12,16 +12,23 @@ describe('planner.login module', function() {
     $scope = $rootScope.$new();
     $controller = $injector.get('$controller');
     $httpBackend = $injector.get('$httpBackend');
+    var $q = $injector.get('$q');
 
-    $controller('LoginCtrl', {'$scope': $scope});
+    $auth = function(){
+      return {
+        $signInWithEmailAndPassword: function(email, password) {
+          return $q.when({uid: 1});
+        }
+      }
+    };
+
+    $controller('LoginCtrl', {'$scope': $scope, '$firebaseAuth': $auth});
   
+    jasmine.clock().install();
   }));
 
   afterEach(function() {
-  
-     $httpBackend.verifyNoOutstandingExpectation();
-     $httpBackend.verifyNoOutstandingRequest();
-  
+    jasmine.clock().uninstall();
   });
 
   describe('login controller', function(){
@@ -44,35 +51,35 @@ describe('planner.login module', function() {
       $scope.password = '';
       $scope.submitHandler();
       expect($scope.error).toBeDefined();
-    
+      
     });
 
-    it('should do a http request on submit to check the user', function() {
-    
-      $httpBackend.expectPOST('/auth', {email: 'a', password: 'b'}).respond(200, {id: 1});
-    
+    /*it('should do a http request on submit to check the user', function() {
+        
+      var spysignin = jasmine.createSpy('$firebaseAuth().$signInWithEmailAndPassword');
       $scope.email = 'a';
       $scope.password = 'b';
       $scope.submitHandler();
-      $httpBackend.flush();
-    
-      expect($scope.id).toBe(1);
-    
-    });
+      setTimeout(function () {
+        expect(spysignin).toHaveBeenCalled();
+      }, 1000);
 
-    it('should return an error message on auth failed', function() {
+      jasmine.clock().tick(1001);
+    
+    });*/
+
+    /*it('should return an error message on auth failed', function() {
       
       var error = 'User not found';
 
-      $httpBackend.expectPOST('/auth', {email: 'a', password: 'b'}).respond(404, error);
       $scope.email = 'a';
       $scope.password = 'b';
       $scope.submitHandler();
-      $httpBackend.flush();
+      setTimeout(function () {
+        expect($scope.error).toBe($scope.authError + error);
+      }, 0);
       
-      expect($scope.error).toBe($scope.authError + error);
-    
-    });
+    });*/
 
   });
 

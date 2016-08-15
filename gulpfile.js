@@ -108,6 +108,7 @@ gulp.task('tests', ['buildjs'], function () {
   ])
   .pipe(jasmine({
     integration: true,
+    jasmineversion: '2.4'
   }));
 
 });

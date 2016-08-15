@@ -25,8 +25,8 @@ angular.module('planner', [
 
   }])
 
-.controller('AppController', ['$scope', 
-  function($scope) {
+.controller('AppController', ['$rootScope', '$scope', 
+  function($rootsScope, $scope) {
     
     $scope.isCollapsed = true;
 
@@ -58,7 +58,12 @@ angular.module('planner', [
     .constant('FirebaseUrl', 'https://udacity-event-planner-7ce8e.firebaseio.com')
     .service('RootRef', RootRef)
     .service('Users', Users)
-    .service('Events', Events);
+    .service('Events', Events)
+
+    .factory("Auth", ["$firebaseAuth", function($firebaseAuth) {
+        return $firebaseAuth();
+      }
+    ]);
 
   function RootRef() {
     return firebase.database().ref();
@@ -151,13 +156,19 @@ angular.module('planner', [
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
       templateUrl: 'js/views/home/home.html',
-      controller: 'HomeCtrl'
+      controller: 'HomeCtrl',
+      resolve: {
+        // controller will not be loaded until $waitForSignIn resolves
+        "currentAuth": ["Auth", function(Auth) {
+          return Auth.$waitForSignIn();
+        }]
+      }
     });
   }])
 
-  .controller('HomeCtrl', ['$scope', 'Users', function($scope, Users) {
+  .controller('HomeCtrl', ['$rootScope', 'Users', 'currentAuth', function($rootScope, Users, currentAuth) {
 
-    $scope.user = Users.get('juanmi');
+    $rootScope.authUser = currentAuth;
 
   }]);
 
@@ -165,7 +176,7 @@ angular.module('planner', [
 (function () { 
 'use strict';
 
-  angular.module('planner.login', ['ngRoute'])
+  angular.module('planner.login', ['ngRoute', 'firebase'])
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login', {
@@ -174,7 +185,7 @@ angular.module('planner', [
     });
   }])
 
-  .controller('LoginCtrl', ['$scope', '$http', function($scope, $http) {
+  .controller('LoginCtrl', ['$rootScope', '$scope', '$firebaseAuth', function($rootScope, $scope, $firebaseAuth) {
     $scope.email = '';
     $scope.password = '';
 
@@ -184,13 +195,12 @@ angular.module('planner', [
         return false;
       }
 
-      $http.post('/auth', {email: $scope.email, password: $scope.password})
-        .then(function authHandler(response) {
-          $scope.id = response.data.id;
+      $firebaseAuth().$signInWithEmailAndPassword("my@email.com", "password")
+        .then(function(firebaseUser) {
+          $rootScope.authUser = firebaseUser;
         })
-        .catch(function authFailHandler(error) {
-          $scope.authError = 'There was an error trying to authenticate the user ';
-          $scope.error = $scope.authError + error.data;
+        .catch(function(error) {
+          $scope.error = "Authentication failed: " + error;
         });
     }
   }]);
@@ -199,7 +209,7 @@ angular.module('planner', [
 (function () { 
 'use strict';
 
-  angular.module('planner.signup', ['ngRoute', 'planner.validators'])
+  angular.module('planner.signup', ['ngRoute', 'planner.validators', 'firebase'])
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/signup', {
@@ -208,21 +218,17 @@ angular.module('planner', [
     });
   }])
 
-  .controller('SignupCtrl', ['$scope', '$http', function($scope, $http) {
+  .controller('SignupCtrl', ['$rootScope', '$scope', '$firebaseAuth', function($rootScope, $scope, $firebaseAuth) {
 
     $scope.submitHandler = function(form) {
 
       if(form.$valid) {
-      
-        $http.post('/signup', $scope.user)
-          .then(function authHandler(response) {
-            $scope.id = response.data.id;
+        $firebaseAuth().$createUserWithEmailAndPassword($scope.user.email, $scope.user.password)
+          .then(function(firebaseUser) {
+            $rootScope.authUser = firebaseUser;
+          }).catch(function(error) {
+            $scope.authError = "There was an error trying to create the user: " + error.message;
           })
-          .catch(function authFailHandler(error) {
-            $scope.authError = 'There was an error trying to authenticate the user ';
-            $scope.error = $scope.authError + error.data;
-          });
-      
       }
     }
 

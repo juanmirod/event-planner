@@ -3,26 +3,27 @@ describe('planner.signup module', function() {
 
   beforeEach(module('planner.signup'));
 
-  var $controller, $rootScope, $scope, $httpBackend;
+  var $controller, 
+    $rootScope, 
+    $scope, 
+    $authAvailable,
+    $q,
+    testRunnerUser = {
+      uid: 1, 
+      name: 'testrunner', 
+      email: 'testrunner@fake.com', 
+      password: 'DumbBotPassword123'
+    };
 
-  beforeEach(inject(function($injector){
+  beforeEach(inject(function($injector) {
   
     // The injector unwraps the underscores (_) from around the parameter names when matching
     $rootScope = $injector.get('$rootScope');
     $scope = $rootScope.$new();
     $controller = $injector.get('$controller');
-    $httpBackend = $injector.get('$httpBackend');
-
-    $controller('SignupCtrl', {'$scope': $scope});
+    $q = $injector.get('$q');
   
   }));
-
-  afterEach(function() {
-  
-     $httpBackend.verifyNoOutstandingExpectation();
-     $httpBackend.verifyNoOutstandingRequest();
-  
-  });
 
   describe('signup controller', function(){
 
@@ -30,6 +31,7 @@ describe('planner.signup module', function() {
 
     beforeEach(function(){
       form = {$valid: true};
+      $controller('SignupCtrl', {'$scope': $scope});
     });
 
     it('should do nothing if the form is not valid', function() {
@@ -39,36 +41,58 @@ describe('planner.signup module', function() {
 
     });
 
-    it('should do a http request on submit to create the user', function() {
-    
-      $scope.user = {name: 'a', email: 'a', password: 'b'};
+    /*describe('signup process success', function(){
 
-      $httpBackend
-        .expectPOST('/signup', $scope.user)
-        .respond(200, {id: 1});
-    
-      $scope.submitHandler(form);
-      $httpBackend.flush();
-    
-      expect($scope.id).toBe(1);
-    
-    });
+        beforeEach(function() {
+          $authAvailable = true;
 
-    it('should return an error message when signup failed', function() {
+          var $auth = function(){
+            return {
+              $createUserWithEmailAndPassword: function(email, password) {
+                return $q.when(testRunnerUser);
+              }
+            }
+          };
+
+          // bind the controller to our scope and mocked auth service
+          $controller('SignupCtrl', {'$scope': $scope, '$firebaseAuth': $auth});
+
+          jasmine.clock().install();
+        });
+
+        afterEach(function() {
+          jasmine.clock().uninstall();
+        });
+
+        it('should do a request to firebase on submit to create the user', function() {
+          // simulate user input
+          $scope.user = testRunnerUser;
+          $scope.submitHandler(form);
+          setTimeout(function(){
+            expect($rootScope.authUser.uid).toBe(1);
+          }, 100);
+          jasmine.clock().tick(101);
+        });
+
+    });*/
+
+    /*describe('signup process fail', function(){
       
-      var error = 'Server error';
-      $scope.user = {name: 'a', email: 'a', password: 'b'};
+      beforeEach(function() {
 
-      $httpBackend
-        .expectPOST('/signup', $scope.user)
-        .respond(500, error);
 
-      $scope.submitHandler(form);
-      $httpBackend.flush();
-      
-      expect($scope.error).toBe($scope.authError + error);
-    
-    });
+        // bind the controller to our scope and mocked auth service
+        //$controller('SignupCtrl', {'$scope': $scope, '$firebaseAuth': $auth});
+        $scope.user = testRunnerUser;
+        $scope.submitHandler(form);
+      });
+
+      it('should return an error message when signup failed', function() {
+        
+        expect($scope.authError).toBe('User creation failed!');
+
+      });
+    })*/
 
   });
 

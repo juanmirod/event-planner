@@ -1,7 +1,7 @@
 (function () { 
 'use strict';
 
-  angular.module('planner.login', ['ngRoute'])
+  angular.module('planner.login', ['ngRoute', 'firebase'])
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login', {
@@ -10,7 +10,7 @@
     });
   }])
 
-  .controller('LoginCtrl', ['$scope', '$http', function($scope, $http) {
+  .controller('LoginCtrl', ['$rootScope', '$scope', '$firebaseAuth', function($rootScope, $scope, $firebaseAuth) {
     $scope.email = '';
     $scope.password = '';
 
@@ -20,13 +20,12 @@
         return false;
       }
 
-      $http.post('/auth', {email: $scope.email, password: $scope.password})
-        .then(function authHandler(response) {
-          $scope.id = response.data.id;
+      $firebaseAuth().$signInWithEmailAndPassword("my@email.com", "password")
+        .then(function(firebaseUser) {
+          $rootScope.authUser = firebaseUser;
         })
-        .catch(function authFailHandler(error) {
-          $scope.authError = 'There was an error trying to authenticate the user ';
-          $scope.error = $scope.authError + error.data;
+        .catch(function(error) {
+          $scope.error = "Authentication failed: " + error;
         });
     }
   }]);

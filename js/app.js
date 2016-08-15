@@ -25,8 +25,8 @@ angular.module('planner', [
 
   }])
 
-.controller('AppController', ['$scope', 
-  function($scope) {
+.controller('AppController', ['$rootScope', '$scope', 
+  function($rootsScope, $scope) {
     
     $scope.isCollapsed = true;
 

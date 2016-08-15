@@ -18,7 +18,12 @@
     .constant('FirebaseUrl', 'https://udacity-event-planner-7ce8e.firebaseio.com')
     .service('RootRef', RootRef)
     .service('Users', Users)
-    .service('Events', Events);
+    .service('Events', Events)
+
+    .factory("Auth", ["$firebaseAuth", function($firebaseAuth) {
+        return $firebaseAuth();
+      }
+    ]);
 
   function RootRef() {
     return firebase.database().ref();

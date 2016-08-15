@@ -1,5 +1,5 @@
 <div class="row">
-  <h2 class="col-xs-12">Sign up</h2>
+  <h2 class="col-xs-12">Sign up {{ id }}!!</h2>
 </div>
 <div class="row">
   <div class="col-sm-4 col-sm-offset-4">
@@ -70,6 +70,7 @@
           <div class="form-group">
             <input type="submit" class="btn btn-primary" ng-click="submitHandler(form)" value="Submit">
           </div>
+          <p class="alert alert-danger" ng-if="authError">{{ authError }}</p>
         </form>
       </div>
     </div> 
