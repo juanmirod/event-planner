@@ -3,16 +3,26 @@
 
 // Declare app level module which depends on views, and components
 angular.module('planner', [
-  'ngRoute',
-  'ngAnimate',
-  'ui.bootstrap.collapse',
-  'ui.bootstrap.tpls',
-  'LocalStorageModule',
-  'planner.login',
-  'planner.signup',
-  'planner.home',
-  'firebase'
-])
+    'ngRoute',
+    'ngAnimate',
+    'ui.bootstrap.collapse',
+    'ui.bootstrap.tpls',
+    'LocalStorageModule',
+    'planner.login',
+    'planner.signup',
+    'planner.home',
+    'firebase'
+  ])
+
+.run(["$rootScope", "$location", function($rootScope, $location) {
+    $rootScope.$on("$routeChangeError", function(event, next, previous, error) {
+      // We can catch the error thrown when the $requireSignIn promise is rejected
+      // and redirect the user back to the home page
+      if (error === "AUTH_REQUIRED") {
+        $location.path("/");
+      }
+    });
+  }])
 
 .config(['$locationProvider', '$routeProvider', 'localStorageServiceProvider',
   function($locationProvider, $routeProvider, localStorageServiceProvider) {
@@ -181,7 +191,13 @@ angular.module('planner', [
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login', {
       templateUrl: 'js/views/login/login.html',
-      controller: 'LoginCtrl'
+      controller: 'LoginCtrl',
+      resolve: {
+        // controller will not be loaded until $waitForSignIn resolves
+        "currentAuth": ["Auth", function(Auth) {
+          return Auth.$waitForSignIn();
+        }]
+      }
     });
   }])
 

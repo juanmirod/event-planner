@@ -48,9 +48,9 @@
                    name="password"
                    ng-model="user.password"
                    password>
-              <span class="help-block" ng-show="form.password.$dirty && form.password.$error" ng-repeat="message in passwordErrorMessages">
+            <span class="help-block" ng-show="form.password.$dirty && form.password.$error" ng-repeat="message in passwordErrorMessages">
               {{ message }}
-              </span>
+            </span>
           </div>
           <h3>Tell the community a bit more about you</h3>
           <div class="form-group" ng-class="{'has-warning': form.bio.$dirty && form.bio.$viewValue.length == 300 }">

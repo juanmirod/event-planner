@@ -1,13 +1,11 @@
 describe('planner.signup module', function() {
 'use strict';
 
-  beforeEach(module('planner.signup'));
-
-  var $controller, 
-    $rootScope, 
-    $scope, 
-    $authAvailable,
+  var createController,
+    rootScope, 
+    scope, 
     $q,
+    firebaseAuth,
     testRunnerUser = {
       uid: 1, 
       name: 'testrunner', 
@@ -15,15 +13,48 @@ describe('planner.signup module', function() {
       password: 'DumbBotPassword123'
     };
 
-  beforeEach(inject(function($injector) {
+  beforeEach(function(){
+    module('planner.signup')
+
+    module(function($provide){
+      $provide.factory('$firebaseAuth', function($q) {
+        return function() {
+          return {
+            '$createUserWithEmailAndPassword': function(email, password) {
+              return $q.when(testRunnerUser);
+            }
+          };
+        };
+      });
+
+      return null;
+    });
+
+  });
+
+
+  beforeEach(function() {
   
-    // The injector unwraps the underscores (_) from around the parameter names when matching
-    $rootScope = $injector.get('$rootScope');
-    $scope = $rootScope.$new();
-    $controller = $injector.get('$controller');
-    $q = $injector.get('$q');
+    inject(function($controller, $rootScope, _$firebaseAuth_, _$q_) {
+
+      // The injector unwraps the underscores (_) from around the parameter names when matching    
+      firebaseAuth = _$firebaseAuth_;
+      scope = $rootScope.$new();
+      rootScope = $rootScope;
+      $q = _$q_;
+      
+      createController = function(params) {
+        return $controller("SignupCtrl", {
+          $rootScope: rootScope,
+          $scope: scope,
+          $firebaseAuth: firebaseAuth,
+          $stateParams: params || {}
+        });
+      };
+
+    });
   
-  }));
+  });
 
   describe('signup controller', function(){
 
@@ -31,47 +62,26 @@ describe('planner.signup module', function() {
 
     beforeEach(function(){
       form = {$valid: true};
-      $controller('SignupCtrl', {'$scope': $scope});
     });
 
     it('should do nothing if the form is not valid', function() {
     
       form.$valid = false;  
-      $scope.submitHandler(form);
+      createController();
+      scope.submitHandler(form);
 
     });
 
     /*describe('signup process success', function(){
 
-        beforeEach(function() {
-          $authAvailable = true;
-
-          var $auth = function(){
-            return {
-              $createUserWithEmailAndPassword: function(email, password) {
-                return $q.when(testRunnerUser);
-              }
-            }
-          };
-
-          // bind the controller to our scope and mocked auth service
-          $controller('SignupCtrl', {'$scope': $scope, '$firebaseAuth': $auth});
-
-          jasmine.clock().install();
-        });
-
-        afterEach(function() {
-          jasmine.clock().uninstall();
-        });
-
         it('should do a request to firebase on submit to create the user', function() {
           // simulate user input
-          $scope.user = testRunnerUser;
-          $scope.submitHandler(form);
-          setTimeout(function(){
-            expect($rootScope.authUser.uid).toBe(1);
-          }, 100);
-          jasmine.clock().tick(101);
+          var spy = spyOn(firebaseAuth(), '$createUserWithEmailAndPassword');
+          createController();
+          scope.user = testRunnerUser;
+          //scope.submitHandler(form);
+          firebaseAuth().$createUserWithEmailAndPassword('a', 'b');
+          expect(spy).toHaveBeenCalled();
         });
 
     });*/
