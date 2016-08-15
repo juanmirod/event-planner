@@ -48,5 +48,9 @@
       return $firebaseArray(eventsRef);    
     };
 
+    this.add = function add() {
+      return $firebaseArray(eventsRef).$add;
+    }
+
   }
 })();

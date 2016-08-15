@@ -1,7 +1,7 @@
 (function () {
 'use strict';
    
-  angular.module('planner.home', ['firebaseAPI', 'ngRoute'])
+  angular.module('planner.home', ['firebaseAPI', 'ngRoute', 'ngMap'])
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
@@ -16,9 +16,10 @@
     });
   }])
 
-  .controller('HomeCtrl', ['$rootScope', 'Users', 'currentAuth', function($rootScope, Users, currentAuth) {
+  .controller('HomeCtrl', ['$rootScope', '$scope', 'Events', 'currentAuth', function($rootScope, $scope, Events, currentAuth) {
 
     $rootScope.authUser = currentAuth;
+    $scope.events = Events.all();
 
   }]);
 

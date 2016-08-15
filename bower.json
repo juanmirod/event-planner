@@ -25,7 +25,8 @@
     "angular-local-storage": "^0.2.7",
     "angular-route": "^1.5.8",
     "angular-mocks": "^1.5.8",
-    "angularfire": "^2.0.1"
+    "angularfire": "^2.0.1",
+    "ngmap": "^1.17.3"
   },
   "overrides": {
     "bootstrap": {
