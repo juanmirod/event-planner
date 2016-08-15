@@ -11,6 +11,7 @@ angular.module('planner', [
     'planner.login',
     'planner.signup',
     'planner.home',
+    'planner.event',
     'firebase'
   ])
 

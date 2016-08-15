@@ -11,6 +11,7 @@ angular.module('planner', [
     'planner.login',
     'planner.signup',
     'planner.home',
+    'planner.event',
     'firebase'
   ])
 
@@ -49,6 +50,7 @@ angular.module('planner', [
 
 })();
 (function () {
+'use strict';
   
   // Initialize Firebase
   var config = {
@@ -100,7 +102,8 @@ angular.module('planner', [
   }
 })();
 (function () {
-   
+'use strict';
+
    angular.module('planner.validators', [])
 
    .directive('password', function(){
@@ -115,7 +118,7 @@ angular.module('planner', [
 
             var addErrorMessage = function(message) {
               scope.passwordErrorMessages.push(message);
-            }
+            };
 
             if(ctrl.$isEmpty(modelValue)) {
               return true;
@@ -152,10 +155,56 @@ angular.module('planner', [
             });
             
             return scope.valid;
-          }
+          };
         }  
-      }
+      };
    }); 
+
+})();
+(function () { 
+'use strict';
+
+  angular.module('planner.event', ['ngRoute', 'firebase'])
+
+  .config(['$routeProvider', function($routeProvider) {
+    $routeProvider.when('/create', {
+      templateUrl: 'js/views/event/create.html',
+      controller: 'CreateCtrl',
+      resolve: {
+        // controller will not be loaded until $waitForSignIn resolves
+        "currentAuth": ["Auth", function(Auth) {
+          return Auth.$requireSignIn();
+        }]
+      }
+    });
+
+    $routeProvider.when('/edit', {
+      templateUrl: 'js/views/event/edit.html',
+      controller: 'EditCtrl',
+      resolve: {
+        // controller will not be loaded until $waitForSignIn resolves
+        "currentAuth": ["Auth", function(Auth) {
+          return Auth.$requireSignIn();
+        }]
+      }
+    });
+  }])
+
+  .controller('CreateCtrl', ['$rootScope', '$scope', '$firebaseObject', function($rootScope, $scope, $firebaseObject) {
+    
+    $scope.submitHandler = function() {
+      
+    };
+
+  }])
+
+  .controller('EditCtrl', ['$rootScope', '$scope', '$firebaseObject', function($rootScope, $scope, $firebaseObject) {
+    
+    $scope.submitHandler = function() {
+      
+    };
+    
+  }]);
 
 })();
 (function () {
@@ -206,7 +255,7 @@ angular.module('planner', [
     $scope.password = '';
 
     $scope.submitHandler = function() {
-      if($scope.email == '' || $scope.password == '') {
+      if($scope.email === '' || $scope.password === '') {
         $scope.error = 'Please fill in the username and password fields';
         return false;
       }
@@ -218,7 +267,8 @@ angular.module('planner', [
         .catch(function(error) {
           $scope.error = "Authentication failed: " + error;
         });
-    }
+    };
+
   }]);
 
 })();
@@ -244,9 +294,9 @@ angular.module('planner', [
             $rootScope.authUser = firebaseUser;
           }).catch(function(error) {
             $scope.authError = "There was an error trying to create the user: " + error.message;
-          })
+          });
       }
-    }
+    };
 
   }]);
 

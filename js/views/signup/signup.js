@@ -20,9 +20,9 @@
             $rootScope.authUser = firebaseUser;
           }).catch(function(error) {
             $scope.authError = "There was an error trying to create the user: " + error.message;
-          })
+          });
       }
-    }
+    };
 
   }]);
 

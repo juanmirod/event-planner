@@ -21,7 +21,7 @@
     $scope.password = '';
 
     $scope.submitHandler = function() {
-      if($scope.email == '' || $scope.password == '') {
+      if($scope.email === '' || $scope.password === '') {
         $scope.error = 'Please fill in the username and password fields';
         return false;
       }
@@ -33,7 +33,8 @@
         .catch(function(error) {
           $scope.error = "Authentication failed: " + error;
         });
-    }
+    };
+
   }]);
 
 })();

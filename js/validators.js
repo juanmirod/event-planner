@@ -1,5 +1,6 @@
 (function () {
-   
+'use strict';
+
    angular.module('planner.validators', [])
 
    .directive('password', function(){
@@ -14,7 +15,7 @@
 
             var addErrorMessage = function(message) {
               scope.passwordErrorMessages.push(message);
-            }
+            };
 
             if(ctrl.$isEmpty(modelValue)) {
               return true;
@@ -51,9 +52,9 @@
             });
             
             return scope.valid;
-          }
+          };
         }  
-      }
+      };
    }); 
 
 })();
