@@ -12,7 +12,8 @@ angular.module('planner', [
     'planner.signup',
     'planner.home',
     'planner.event',
-    'firebase'
+    'firebase',
+    'firebaseAPI'
   ])
 
 .run(["$rootScope", "$location", function($rootScope, $location) {
@@ -36,11 +37,19 @@ angular.module('planner', [
 
   }])
 
-.controller('AppController', ['$rootScope', '$scope', '$location', 
-  function($rootsScope, $scope, $location) {
+.controller('AppController', ['$rootScope', '$scope', '$location', 'Auth',
+  function($rootsScope, $scope, $location, Auth) {
     
+    $scope.auth = Auth;
+
     $scope.$location = $location;
     $scope.isCollapsed = true;
+
+    // any time auth state changes, add the user data to scope
+    $scope.auth.$onAuthStateChanged(function(firebaseUser) {
+      console.log(firebaseUser);
+      $scope.firebaseUser = firebaseUser;
+    });
 
     // Every time the user changes the view, we must collapse the menu
     $scope.$on('$routeChangeStart', function(){

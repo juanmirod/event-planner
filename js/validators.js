@@ -18,7 +18,8 @@
             };
 
             if(ctrl.$isEmpty(modelValue)) {
-              return true;
+              addErrorMessage('This field is required');
+              return false;
             }
                         
             if(viewValue.match(/[^A-z0-9\\!\\@\\#\\$\\%\\^\\&\\*]/)) {

@@ -34,8 +34,8 @@
       if(form.$valid) {
         $scope.event.created_at = Date.now();
         $scope.event.created_by = currentAuth.uid;
-        $scope.event.start_date = new Date($scope.event.start_date).getTime();
-        $scope.event.end_date = new Date($scope.event.end_date).getTime();
+        $scope.event.start_date = new Date($scope.event.start_date_form).getTime();
+        $scope.event.end_date = new Date($scope.event.end_date_form).getTime();
         
         Events.all().$add($scope.event)
           .then(function(event) {

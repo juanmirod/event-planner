@@ -12,7 +12,8 @@ angular.module('planner', [
     'planner.signup',
     'planner.home',
     'planner.event',
-    'firebase'
+    'firebase',
+    'firebaseAPI'
   ])
 
 .run(["$rootScope", "$location", function($rootScope, $location) {
@@ -36,11 +37,19 @@ angular.module('planner', [
 
   }])
 
-.controller('AppController', ['$rootScope', '$scope', '$location', 
-  function($rootsScope, $scope, $location) {
+.controller('AppController', ['$rootScope', '$scope', '$location', 'Auth',
+  function($rootsScope, $scope, $location, Auth) {
     
+    $scope.auth = Auth;
+
     $scope.$location = $location;
     $scope.isCollapsed = true;
+
+    // any time auth state changes, add the user data to scope
+    $scope.auth.$onAuthStateChanged(function(firebaseUser) {
+      console.log(firebaseUser);
+      $scope.firebaseUser = firebaseUser;
+    });
 
     // Every time the user changes the view, we must collapse the menu
     $scope.$on('$routeChangeStart', function(){
@@ -72,14 +81,18 @@ angular.module('planner', [
     .service('RootRef', RootRef)
     .service('Users', Users)
     .service('Events', Events)
+    .factory("Auth", FirebaseAuth);
 
-    .factory("Auth", ["$firebaseAuth", function($firebaseAuth) {
-        return $firebaseAuth();
-      }
-    ]);
+  function FirebaseAuth($firebaseAuth) {
+    
+    return $firebaseAuth();
+  
+  }
 
   function RootRef() {
+  
     return firebase.database().ref();
+  
   }
 
   function Users(RootRef, $firebaseObject) {
@@ -126,7 +139,8 @@ angular.module('planner', [
             };
 
             if(ctrl.$isEmpty(modelValue)) {
-              return true;
+              addErrorMessage('This field is required');
+              return false;
             }
                         
             if(viewValue.match(/[^A-z0-9\\!\\@\\#\\$\\%\\^\\&\\*]/)) {
@@ -202,8 +216,8 @@ angular.module('planner', [
       if(form.$valid) {
         $scope.event.created_at = Date.now();
         $scope.event.created_by = currentAuth.uid;
-        $scope.event.start_date = new Date($scope.event.start_date).getTime();
-        $scope.event.end_date = new Date($scope.event.end_date).getTime();
+        $scope.event.start_date = new Date($scope.event.start_date_form).getTime();
+        $scope.event.end_date = new Date($scope.event.end_date_form).getTime();
         
         Events.all().$add($scope.event)
           .then(function(event) {
@@ -258,7 +272,7 @@ angular.module('planner', [
 (function () { 
 'use strict';
 
-  angular.module('planner.login', ['ngRoute', 'firebase'])
+  angular.module('planner.login', ['ngRoute', 'firebaseAPI'])
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login', {
@@ -273,24 +287,24 @@ angular.module('planner', [
     });
   }])
 
-  .controller('LoginCtrl', ['$rootScope', '$scope', '$firebaseAuth', function($rootScope, $scope, $firebaseAuth) {
-    $scope.email = '';
-    $scope.password = '';
+  .controller('LoginCtrl', ['$rootScope', '$scope', 'Auth', '$location',
+    function($rootScope, $scope, Auth, $location) {
+      $scope.email = '';
+      $scope.password = '';
 
-    $scope.submitHandler = function() {
-      if($scope.email === '' || $scope.password === '') {
-        $scope.error = 'Please fill in the username and password fields';
-        return false;
-      }
+      $scope.submitHandler = function(form) {
 
-      $firebaseAuth().$signInWithEmailAndPassword("my@email.com", "password")
-        .then(function(firebaseUser) {
-          $rootScope.authUser = firebaseUser;
-        })
-        .catch(function(error) {
-          $scope.error = "Authentication failed: " + error;
-        });
-    };
+        if(form.$valid) {
+          Auth.$signInWithEmailAndPassword($scope.email, $scope.password)
+            .then(function(firebaseUser) {
+              $location.path("/");
+            })
+            .catch(function(error) {
+              $scope.error = "Authentication failed: " + error;
+            });
+        }
+
+      };
 
   }]);
 

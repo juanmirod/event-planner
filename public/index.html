@@ -41,20 +41,29 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="#!/">
-          Event Planner <span ng-if="authUser">- {{ authUser.email }}</span>
+          Event Planner
         </a>
       </div>
       <div id="navbar" class="navbar-collapse" uib-collapse="isCollapsed">
         <ul class="nav navbar-nav">
-          <li ng-class="{active: ($location.path() == '/create')}">
+          <li ng-if="firebaseUser" ng-class="{active: ($location.path() == '/create')}">
             <a href="#!/create">Create new event</a>
           </li>
         </ul>
         
-        <ul class="nav navbar-nav navbar-right">
+        <ul ng-hide="firebaseUser" class="nav navbar-nav navbar-right">
           <li><a href="#!/login">Login</a></li>
           <li><a href="#!/signup">Sign-up</a></li>
         </ul>
+
+        <ul ng-show="firebaseUser" class="nav navbar-nav navbar-right">
+          <li>
+            <a href="#!/" ng-click="auth.$signOut()">
+              <span ng-if="firebaseUser">{{ user.name }} - </span>Logout
+            </a>
+          </li>
+        </ul>
+
       </div><!--/.nav-collapse -->
     </div>
   </nav>

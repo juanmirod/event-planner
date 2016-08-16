@@ -20,14 +20,18 @@
     .service('RootRef', RootRef)
     .service('Users', Users)
     .service('Events', Events)
+    .factory("Auth", FirebaseAuth);
 
-    .factory("Auth", ["$firebaseAuth", function($firebaseAuth) {
-        return $firebaseAuth();
-      }
-    ]);
+  function FirebaseAuth($firebaseAuth) {
+    
+    return $firebaseAuth();
+  
+  }
 
   function RootRef() {
+  
     return firebase.database().ref();
+  
   }
 
   function Users(RootRef, $firebaseObject) {
