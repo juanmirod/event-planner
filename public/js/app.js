@@ -36,9 +36,10 @@ angular.module('planner', [
 
   }])
 
-.controller('AppController', ['$rootScope', '$scope', 
-  function($rootsScope, $scope) {
+.controller('AppController', ['$rootScope', '$scope', '$location', 
+  function($rootsScope, $scope, $location) {
     
+    $scope.$location = $location;
     $scope.isCollapsed = true;
 
     // Every time the user changes the view, we must collapse the menu
@@ -194,12 +195,15 @@ angular.module('planner', [
     });
   }])
 
-  .controller('CreateCtrl', ['$rootScope', '$scope', 'Events', function($rootScope, $scope, Events) {
+  .controller('CreateCtrl', ['$rootScope', '$scope', 'Events', 'currentAuth', function($rootScope, $scope, Events, currentAuth) {
     
     $scope.submitHandler = function(form) {
 
       if(form.$valid) {
         $scope.event.created_at = Date.now();
+        $scope.event.created_by = currentAuth.uid;
+        $scope.event.start_date = new Date($scope.event.start_date).getTime();
+        $scope.event.end_date = new Date($scope.event.end_date).getTime();
         
         Events.all().$add($scope.event)
           .then(function(event) {
@@ -207,6 +211,8 @@ angular.module('planner', [
           }).catch(function(error) {
             $scope.errorMessage = "There was an error trying to create the event: " + error.message;
           });
+      } else {
+        $scope.errorMessage = "Please check that all required fields are filled and dates are correctly formatted.";
       }
 
     };

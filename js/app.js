@@ -36,9 +36,10 @@ angular.module('planner', [
 
   }])
 
-.controller('AppController', ['$rootScope', '$scope', 
-  function($rootsScope, $scope) {
+.controller('AppController', ['$rootScope', '$scope', '$location', 
+  function($rootsScope, $scope, $location) {
     
+    $scope.$location = $location;
     $scope.isCollapsed = true;
 
     // Every time the user changes the view, we must collapse the menu

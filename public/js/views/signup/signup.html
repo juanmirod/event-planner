@@ -10,7 +10,7 @@
       <div class="panel-body">
         <h3>Just the bare minimun info to get your account</h3>
         <form name="form" class="form" novalidate>
-          <div class="form-group" ng-class="{'has-error': form.$submited && !form.name.$valid}">
+          <div class="form-group" ng-class="{'has-error': form.$submitted && !form.name.$valid}">
             <label for="username">Full name
             </label>
             <input  type="text" 
@@ -20,7 +20,7 @@
                     ng-model="user.name"
                     required
                     autocomplete="name">
-            <span class="help-block" ng-show="form.$submited && !form.name.$valid">
+            <span class="help-block" ng-show="form.$submitted && !form.name.$valid">
               We need a name to put it in the events, hint: If you don't want to use your Real Name you can use a nickname.  
             </span>
           </div>
