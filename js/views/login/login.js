@@ -24,8 +24,9 @@
       $scope.submitHandler = function(form) {
 
         if(form.$valid) {
-          Auth.$signInWithEmailAndPassword($scope.email, $scope.password)
-            .then(function(firebaseUser) {
+          var request = Auth.$signInWithEmailAndPassword($scope.email, $scope.password)
+          
+          request.then(function(firebaseUser) {
               $location.path("/");
             })
             .catch(function(error) {

@@ -71,7 +71,7 @@
                    class="form-control"
                    id="startdate"
                    name="startdate"
-                   ng-model="event.start_date_form"
+                   ng-model="event._start_date_form"
                    placeholder="yyyy-MM-ddTHH:mm:ss" 
                    required>
             <span class="help-block" ng-show="form.$submitted && !form.startdate.$valid">
@@ -86,7 +86,7 @@
                    class="form-control"
                    id="enddate"
                    name="enddate"
-                   ng-model="event.end_date_form"
+                   ng-model="event._end_date_form"
                    placeholder="yyyy-MM-ddTHH:mm:ss" 
                    required>
             <span class="help-block" ng-show="form.$submitted && !form.enddate.$valid">
@@ -122,21 +122,21 @@
                       maxlength="500">
             </textarea>
           </div>
-          <div class="form-group">
+          <div class="button-toolbar" role="toolbar">
             <input  id="loginSubmit" 
                     class="btn btn-primary"
                     type="submit"
                     ng-click="submitHandler(form)"
-                    ng-if="!infoMessage"
-                    value="Save">
-            <button ng-if="infoMessage"
-                    class="btn btn-primary col-sm-6" 
+                    ng-disabled="saveDisabled"
+                    value="{{ saveDisabled? 'Loading...' : 'Save' }}">
+            <button ng-if="ref"
+                    class="btn btn-info" 
                     ng-click="$location.path('/')">
               Go to Events
             </button>
           </div>
-          <div ng-show="error" class="alert alert-danger">
-            <p>{{ error }}</p>
+          <div ng-show="error">
+            <p class="alert alert-danger">{{ error }}</p>
           </div>
           <div ng-if="infoMessage">
             <p class="alert alert-info">{{ infoMessage }}</p>

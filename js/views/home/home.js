@@ -19,7 +19,7 @@
   .controller('HomeCtrl', ['$rootScope', '$scope', 'Events', 'currentAuth', function($rootScope, $scope, Events, currentAuth) {
 
     $rootScope.authUser = currentAuth;
-    $scope.events = Events.all();
+    $scope.events = Events.list;
 
   }]);
 

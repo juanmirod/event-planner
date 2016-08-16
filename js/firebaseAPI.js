@@ -44,17 +44,15 @@
 
   }
 
-  function Events(RootRef, $firebaseArray) {
+  function Events(RootRef, $firebaseArray,  $firebaseObject) {
 
     var eventsRef = RootRef.child('events');
+    
+    this.list = $firebaseArray(eventsRef);
 
-    this.all = function all() {
-      return $firebaseArray(eventsRef);    
+    this.get = function get(id) {
+      return $firebaseObject(eventsRef.child(id));
     };
-
-    this.add = function add() {
-      return $firebaseArray(eventsRef).$add;
-    }
 
   }
 })();

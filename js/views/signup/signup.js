@@ -1,7 +1,7 @@
 (function () { 
 'use strict';
 
-  angular.module('planner.signup', ['ngRoute', 'planner.validators', 'firebase'])
+  angular.module('planner.signup', ['ngRoute', 'planner.validators', 'firebaseAPI'])
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/signup', {
@@ -10,12 +10,12 @@
     });
   }])
 
-  .controller('SignupCtrl', ['$rootScope', '$scope', '$firebaseAuth', function($rootScope, $scope, $firebaseAuth) {
+  .controller('SignupCtrl', ['$rootScope', '$scope', 'Auth', function($rootScope, $scope, Auth) {
 
     $scope.submitHandler = function(form) {
 
       if(form.$valid) {
-        $firebaseAuth().$createUserWithEmailAndPassword($scope.user.email, $scope.user.password)
+        Auth.$createUserWithEmailAndPassword($scope.user.email, $scope.user.password)
           .then(function(firebaseUser) {
             $rootScope.authUser = firebaseUser;
           }).catch(function(error) {

@@ -3,9 +3,10 @@ describe('planner.signup module', function() {
 
   var createController,
     rootScope, 
-    scope, 
-    $q,
+    scope,
+    Auth,
     firebaseAuth,
+    form,
     testRunnerUser = {
       uid: 1, 
       name: 'testrunner', 
@@ -17,13 +18,11 @@ describe('planner.signup module', function() {
     module('planner.signup')
 
     module(function($provide){
-      $provide.factory('$firebaseAuth', function($q) {
-        return function() {
-          return {
-            '$createUserWithEmailAndPassword': function(email, password) {
-              return $q.when(testRunnerUser);
-            }
-          };
+      $provide.factory('Auth', function($q) {
+        return {
+          '$createUserWithEmailAndPassword': function(email, password) {
+            return $q.when(testRunnerUser);
+          }
         };
       });
 
@@ -35,75 +34,44 @@ describe('planner.signup module', function() {
 
   beforeEach(function() {
   
-    inject(function($controller, $rootScope, _$firebaseAuth_, _$q_) {
+    inject(function($controller, $rootScope, _Auth_) {
 
       // The injector unwraps the underscores (_) from around the parameter names when matching    
-      firebaseAuth = _$firebaseAuth_;
+      Auth = _Auth_;
       scope = $rootScope.$new();
       rootScope = $rootScope;
-      $q = _$q_;
       
       createController = function(params) {
         return $controller("SignupCtrl", {
           $rootScope: rootScope,
           $scope: scope,
-          $firebaseAuth: firebaseAuth,
+          Auth: Auth,
           $stateParams: params || {}
         });
       };
 
+      form = {$valid: true};
     });
   
   });
 
-  describe('signup controller', function(){
+  it('should do nothing if the form is not valid', function() {
+  
+    form.$valid = false;  
+    createController();
+    scope.submitHandler(form);
+    expect(true).toBe(true); //jasmine complains if there is no espectations
 
-    var form;
+  });
 
-    beforeEach(function(){
-      form = {$valid: true};
-    });
-
-    it('should do nothing if the form is not valid', function() {
+  it('should do a request to firebase on submit to create the user', function() {
     
-      form.$valid = false;  
-      createController();
-      scope.submitHandler(form);
-
-    });
-
-    /*describe('signup process success', function(){
-
-        it('should do a request to firebase on submit to create the user', function() {
-          // simulate user input
-          var spy = spyOn(firebaseAuth(), '$createUserWithEmailAndPassword');
-          createController();
-          scope.user = testRunnerUser;
-          //scope.submitHandler(form);
-          firebaseAuth().$createUserWithEmailAndPassword('a', 'b');
-          expect(spy).toHaveBeenCalled();
-        });
-
-    });*/
-
-    /*describe('signup process fail', function(){
-      
-      beforeEach(function() {
-
-
-        // bind the controller to our scope and mocked auth service
-        //$controller('SignupCtrl', {'$scope': $scope, '$firebaseAuth': $auth});
-        $scope.user = testRunnerUser;
-        $scope.submitHandler(form);
-      });
-
-      it('should return an error message when signup failed', function() {
-        
-        expect($scope.authError).toBe('User creation failed!');
-
-      });
-    })*/
-
+    var spy = spyOn(Auth, '$createUserWithEmailAndPassword').and.callThrough();
+    createController();
+    scope.user = testRunnerUser;
+    scope.submitHandler(form);
+    expect(spy).toHaveBeenCalled();
+  
   });
 
 });

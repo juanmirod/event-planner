@@ -3,7 +3,16 @@ describe('planner.event module', function() {
 
   beforeEach(module('planner.event'));
 
-  var $controller, $rootScope, $scope, form;
+  var $controller, 
+    $rootScope, 
+    $scope, 
+    $route, 
+    currentAuth, 
+    form,
+    event = {
+      _start_date_form: 'date',
+      _end_date_form: 'date'
+    };
   
   beforeEach(inject(function($injector){
   
@@ -11,40 +20,47 @@ describe('planner.event module', function() {
     $rootScope = $injector.get('$rootScope');
     $scope = $rootScope.$new();
     $controller = $injector.get('$controller');
+    $route = {
+      current: {
+        params: {
+          ref: undefined
+        }
+      }
+    };
+
+    currentAuth = {uid: 1};
       
-    $controller('CreateCtrl', {'$scope': $scope});
+    $controller('CreateCtrl', {'$scope': $scope, 'currentAuth': currentAuth, '$route': $route});
     form = {$valid: true};
+    $scope.event = event;
 
   }));
-
-  describe('CreateEvent controller', function(){
-
-    it('should check that the form is valid on submit', function() {
+  
+  it('should check that the form is valid on submit', function() {
     
-      form.$valid = false;
-      $scope.submitHandler(form);
-      expect($scope.errorMessage).toBeDefined();
-      
-    });
-
-    it('should check that the dates are correctly formatted', function(){
-
-    });
-
-    it('should add created_at value to the event on submit', function(){
+    form.$valid = false;
+    $scope.submitHandler(form);
+    expect($scope.errorMessage).toBeDefined();
     
-      $scope.submitHandler(form);
-      expect($scope.event.created_at).toBeDefined();
-    
-    });
+  });
 
-    it('should add the current user uid to the event object on submit', function(){
-    
-      $scope.submitHandler(form);
-      expect($scope.event.created_by).toBeDefined();
-    
-    });
+  it('should check that the dates are correctly formatted', function(){
 
   });
+
+  it('should add created_at value to the event on submit', function(){
+  
+    $scope.submitHandler(form);
+    expect($scope.event.created_at).toBeDefined();
+  
+  });
+
+  it('should add the current user uid to the event object on submit', function(){
+  
+    $scope.submitHandler(form);
+    expect($scope.event.created_by).toBeDefined();
+  
+  });
+
 
 });

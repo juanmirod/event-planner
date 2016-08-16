@@ -1,86 +1,48 @@
 describe('planner.login module', function() {
 'use strict';
 
-  beforeEach(module('planner.login'));
+  beforeEach(function(){
+    module('planner.login');
 
-  var $controller, $rootScope, $scope, $httpBackend, $auth;
+    module(function($provide){
 
-  beforeEach(inject(function($injector){
-  
-    // The injector unwraps the underscores (_) from around the parameter names when matching
-    $rootScope = $injector.get('$rootScope');
-    $scope = $rootScope.$new();
-    $controller = $injector.get('$controller');
-    $httpBackend = $injector.get('$httpBackend');
-    var $q = $injector.get('$q');
+      $provide.factory('Auth', function($q){
+        return {
+          $signInWithEmailAndPassword: function(email, pass) {
+            return $q.reject({error: 'ERROR'});
+          }
+        };
+      });
 
-    $auth = function(){
-      return {
-        $signInWithEmailAndPassword: function(email, password) {
-          return $q.when({uid: 1});
-        }
-      }
-    };
+      return null;
+    });
 
-    $controller('LoginCtrl', {'$scope': $scope, '$firebaseAuth': $auth});
-  
-    jasmine.clock().install();
-  }));
-
-  afterEach(function() {
-    jasmine.clock().uninstall();
   });
 
-  describe('login controller', function(){
+  var $controller, $rootScope, $scope, $location, Auth;
 
-    it('should contain a model for username', function() {
-    
-      expect($scope.email).toBeDefined();
-    
+  beforeEach(function(){
+  
+    inject(function($controller, $rootScope, $location, _Auth_) {
+      $scope = $rootScope.$new();
+      Auth = _Auth_;
+      
+      $controller("LoginCtrl", {
+        $scope: $scope,
+        Auth: Auth,
+        $stateParams: {}
+      });
     });
 
-    it('should contain a model for password', function() {
+  });
+
+  it('should do a request for the user on submit', function() {
+  
+    var spy = spyOn(Auth, '$signInWithEmailAndPassword').and.callThrough();
+    var form = {$valid: true};
+    $scope.submitHandler(form);
+    expect(spy).toHaveBeenCalled();
     
-      expect($scope.password).toBeDefined();
-    
-    });
-
-    it('should check that email and password exists on submit', function() {
-    
-      $scope.email = '';
-      $scope.password = '';
-      $scope.submitHandler();
-      expect($scope.error).toBeDefined();
-      
-    });
-
-    /*it('should do a http request on submit to check the user', function() {
-        
-      var spysignin = jasmine.createSpy('$firebaseAuth().$signInWithEmailAndPassword');
-      $scope.email = 'a';
-      $scope.password = 'b';
-      $scope.submitHandler();
-      setTimeout(function () {
-        expect(spysignin).toHaveBeenCalled();
-      }, 1000);
-
-      jasmine.clock().tick(1001);
-    
-    });*/
-
-    /*it('should return an error message on auth failed', function() {
-      
-      var error = 'User not found';
-
-      $scope.email = 'a';
-      $scope.password = 'b';
-      $scope.submitHandler();
-      setTimeout(function () {
-        expect($scope.error).toBe($scope.authError + error);
-      }, 0);
-      
-    });*/
-
   });
 
 });

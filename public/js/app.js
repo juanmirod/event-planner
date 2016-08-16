@@ -105,17 +105,15 @@ angular.module('planner', [
 
   }
 
-  function Events(RootRef, $firebaseArray) {
+  function Events(RootRef, $firebaseArray,  $firebaseObject) {
 
     var eventsRef = RootRef.child('events');
+    
+    this.list = $firebaseArray(eventsRef);
 
-    this.all = function all() {
-      return $firebaseArray(eventsRef);    
+    this.get = function get(id) {
+      return $firebaseObject(eventsRef.child(id));
     };
-
-    this.add = function add() {
-      return $firebaseArray(eventsRef).$add;
-    }
 
   }
 })();
@@ -187,7 +185,7 @@ angular.module('planner', [
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/create', {
-      templateUrl: 'js/views/event/create.html',
+      templateUrl: 'js/views/event/event_form.html',
       controller: 'CreateCtrl',
       resolve: {
         // controller will not be loaded until $waitForSignIn resolves
@@ -197,9 +195,9 @@ angular.module('planner', [
       }
     });
 
-    $routeProvider.when('/edit', {
-      templateUrl: 'js/views/event/edit.html',
-      controller: 'EditCtrl',
+    $routeProvider.when('/edit/:ref', {
+      templateUrl: 'js/views/event/event_form.html',
+      controller: 'CreateCtrl',
       resolve: {
         // controller will not be loaded until $waitForSignIn resolves
         "currentAuth": ["Auth", function(Auth) {
@@ -209,37 +207,120 @@ angular.module('planner', [
     });
   }])
 
-  .controller('CreateCtrl', ['$rootScope', '$scope', 'Events', 'currentAuth', function($rootScope, $scope, Events, currentAuth) {
+  .controller('CreateCtrl', ['$scope', 'Events', '$route', '$timeout', 'currentAuth',
+    function($scope, Events, $route, $timeout, currentAuth) {
     
+    // If we get the ref in the route, get the event
+    if(typeof($route.current.params.ref) != 'undefined') {
+      
+      $scope.ref = $route.current.params.ref;
+      loadEvent($scope.ref);
+
+    }
+
     $scope.submitHandler = function(form) {
 
       if(form.$valid) {
-        $scope.event.created_at = Date.now();
-        $scope.event.created_by = currentAuth.uid;
-        $scope.event.start_date = new Date($scope.event.start_date_form).getTime();
-        $scope.event.end_date = new Date($scope.event.end_date_form).getTime();
-        
-        Events.all().$add($scope.event)
-          .then(function(event) {
-            $scope.infoMessage = "Event saved successfully! You can see it on the events list now.";
-          }).catch(function(error) {
-            $scope.errorMessage = "There was an error trying to create the event: " + error.message;
-          });
+
+        // Get the UNIX time of the dates
+        $scope.event.start_date = new Date($scope.event._start_date_form).getTime();
+        $scope.event.end_date = new Date($scope.event._end_date_form).getTime();
+
+        // If the event has already been created, update it
+        if(typeof($scope.ref) != 'undefined') {
+
+          updateEvent();
+
+        } else {
+
+          createEvent();
+
+        }
+
       } else {
+        
         $scope.errorMessage = "Please check that all required fields are filled and dates are correctly formatted.";
+      
       }
 
     };
 
-  }])
+    /*
+      Load an event from firebase and sets the date format to show it on the form
+    */
+    function loadEvent(id) {
 
-  .controller('EditCtrl', ['$rootScope', '$scope', '$firebaseObject', function($rootScope, $scope, $firebaseObject) {
-    
-    $scope.submitHandler = function() {
+      var event = Events.get(id);
+      $scope.event = event;
+      $scope.saveDisabled = true;
+
+      // Format the dates when loaded
+      event.$loaded().then(function(ref){
+        $scope.saveDisabled = false;
+        $scope.event._start_date_form = new Date($scope.event.start_date);
+        $scope.event._end_date_form = new Date($scope.event.end_date);            
+      });
+
+    }
+
+    /*
+      Create a new event and shows the result from firebase.
+    */
+    function createEvent() {
+
+      $scope.event.created_at = Date.now();
+      $scope.event.created_by = currentAuth.uid;
       
+      Events.list.$add($scope.event)
+        .then(function(ref) {
+          
+          $scope.saveDisabled = true;
+          $scope.infoMessage = "Event saved successfully! You can see it on the events list now.";
 
-    };
+          $scope.ref = ref.key;
+          loadEvent(ref.key);
+
+          $timeout($scope.continueEditing, 1000);
+
+        }).catch(function(error) {
+
+          $scope.errorMessage = "There was an error trying to create the event: " + error.message;
+        
+        });
     
+    }
+
+    /*
+      Save the current event
+    */
+    function updateEvent() {
+
+      $scope.event.$save()
+        .then(function(ref) {
+          
+          $scope.saveDisabled = true;
+          $scope.infoMessage = "Event saved successfully!";
+          $timeout($scope.continueEditing, 1000);
+
+        })
+        .catch(function(error) {
+
+          $scope.errorMessage = "There was an error trying to update the event: " + error.message;
+          
+        });
+
+    }
+
+    // Remove the info message to show the save button again 
+    // (but now it will be disabled because the event is bind to 
+    // the firebase object)
+    $scope.continueEditing = function() {
+      
+      $scope.saveDisabled = false;
+      $scope.infoMessage = undefined;
+    
+    }
+
   }]);
 
 })();
@@ -264,7 +345,7 @@ angular.module('planner', [
   .controller('HomeCtrl', ['$rootScope', '$scope', 'Events', 'currentAuth', function($rootScope, $scope, Events, currentAuth) {
 
     $rootScope.authUser = currentAuth;
-    $scope.events = Events.all();
+    $scope.events = Events.list;
 
   }]);
 
@@ -295,8 +376,9 @@ angular.module('planner', [
       $scope.submitHandler = function(form) {
 
         if(form.$valid) {
-          Auth.$signInWithEmailAndPassword($scope.email, $scope.password)
-            .then(function(firebaseUser) {
+          var request = Auth.$signInWithEmailAndPassword($scope.email, $scope.password)
+          
+          request.then(function(firebaseUser) {
               $location.path("/");
             })
             .catch(function(error) {
@@ -312,7 +394,7 @@ angular.module('planner', [
 (function () { 
 'use strict';
 
-  angular.module('planner.signup', ['ngRoute', 'planner.validators', 'firebase'])
+  angular.module('planner.signup', ['ngRoute', 'planner.validators', 'firebaseAPI'])
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/signup', {
@@ -321,12 +403,12 @@ angular.module('planner', [
     });
   }])
 
-  .controller('SignupCtrl', ['$rootScope', '$scope', '$firebaseAuth', function($rootScope, $scope, $firebaseAuth) {
+  .controller('SignupCtrl', ['$rootScope', '$scope', 'Auth', function($rootScope, $scope, Auth) {
 
     $scope.submitHandler = function(form) {
 
       if(form.$valid) {
-        $firebaseAuth().$createUserWithEmailAndPassword($scope.user.email, $scope.user.password)
+        Auth.$createUserWithEmailAndPassword($scope.user.email, $scope.user.password)
           .then(function(firebaseUser) {
             $rootScope.authUser = firebaseUser;
           }).catch(function(error) {
