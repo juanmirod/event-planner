@@ -27,119 +27,171 @@
     });
   }])
 
-  .controller('CreateCtrl', ['$scope', 'Events', '$route', '$timeout', 'currentAuth',
-    function($scope, Events, $route, $timeout, currentAuth) {
+  .controller('CreateCtrl', ['$scope', 'Events', '$route', '$timeout', 'currentAuth', 'NgMap',
+    function($scope, Events, $route, $timeout, currentAuth, NgMap) {
+
+      // Initialization
+      $scope.event = {};
+      $scope.triedLocation = false;
+      NgMap.getMap().then(function(map) {
+        $scope.map = map;
+      });
     
-    // If we get the ref in the route, get the event
-    if(typeof($route.current.params.ref) != 'undefined') {
-      
-      $scope.ref = $route.current.params.ref;
-      loadEvent($scope.ref);
+      // If we get the ref in the route, get the event
+      if(typeof($route.current.params.ref) != 'undefined') {
+        
+        $scope.ref = $route.current.params.ref;
+        loadEvent($scope.ref);
 
-    }
+      }
 
-    $scope.submitHandler = function(form) {
+      /*
+        Stores the event in firebase
+      */
+      $scope.submitHandler = function(form) {
 
-      if(form.$valid) {
+        if(form.$valid) {
 
-        // Get the UNIX time of the dates
-        $scope.event.start_date = new Date($scope.event._start_date_form).getTime();
-        $scope.event.end_date = new Date($scope.event._end_date_form).getTime();
+          // Get the UNIX time of the dates
+          $scope.event.start_date = new Date($scope.event._start_date_form).getTime();
+          $scope.event.end_date = new Date($scope.event._end_date_form).getTime();
 
-        // If the event has already been created, update it
-        if(typeof($scope.ref) != 'undefined') {
+          // If the event has already been created, update it
+          if(typeof($scope.ref) != 'undefined') {
 
-          updateEvent();
+            updateEvent();
+
+          } else {
+
+            createEvent();
+
+          }
 
         } else {
-
-          createEvent();
-
+          
+          $scope.errorMessage = "Please check that all required fields are filled and dates are correctly formatted.";
+        
         }
 
-      } else {
+      };
+
+      /*
+        Get the user current location through the browser service
+       */
+      $scope.getLocation = function askForLocation() {
+        if(navigator.geolocation && !$scope.triedLocation) {
+          $scope.triedLocation = true;
+          navigator.geolocation.getCurrentPosition(
+            function(location){
+              $scope.event.location = '(' + location.coords.latitude + ', ' + location.coords.longitude +')';
+              $scope.located = true;
+              $scope.$apply();
+              $scope.map.setCenter({lat: location.coords.latitude, lng: location.coords.longitude});
+            },
+            function(error){
+              $scope.event.location = "Sorry, but we couldn't get your location";
+              $scope.$apply();
+              console.log("There was an error trying to get the user location: ", error);
+            });
+        }
+      };
+
+      /*
+        Center the map on the entered location, called when location is changed
+      */
+      $scope.locationChangedHandler = function() {
         
-        $scope.errorMessage = "Please check that all required fields are filled and dates are correctly formatted.";
+        // The user moved the marker
+        if(this.position) {
+        
+          $scope.map.setCenter(this.position);
+          $scope.event.location = this.position.toString();
+          $scope.$apply();
+        
+        } else { // The user typed an address
+        
+          $scope.place = this.getPlace();
+          $scope.map.setCenter($scope.place.geometry.location);
+        
+        }
+
+      }
+      
+      /*
+        Load an event from firebase and sets the date format to show it on the form
+      */
+      function loadEvent(id) {
+
+        var event = Events.get(id);
+        $scope.event = event;
+        $scope.saveDisabled = true;
+
+        // Format the dates when loaded
+        event.$loaded().then(function(ref){
+          $scope.saveDisabled = false;
+          $scope.event._start_date_form = new Date($scope.event.start_date);
+          $scope.event._end_date_form = new Date($scope.event.end_date);            
+        });
+
+      }
+
+      /*
+        Create a new event and shows the result from firebase.
+      */
+      function createEvent() {
+
+        $scope.event.created_at = Date.now();
+        $scope.event.created_by = currentAuth.uid;
+        
+        Events.list.$add($scope.event)
+          .then(function(ref) {
+            
+            $scope.saveDisabled = true;
+            $scope.infoMessage = "Event saved successfully! You can see it on the events list now.";
+
+            $scope.ref = ref.key;
+            loadEvent(ref.key);
+
+            $timeout($scope.continueEditing, 1000);
+
+          }).catch(function(error) {
+
+            $scope.errorMessage = "There was an error trying to create the event: " + error.message;
+          
+          });
       
       }
 
-    };
+      /*
+        Save the current event
+      */
+      function updateEvent() {
 
-    /*
-      Load an event from firebase and sets the date format to show it on the form
-    */
-    function loadEvent(id) {
+        $scope.event.$save()
+          .then(function(ref) {
+            
+            $scope.saveDisabled = true;
+            $scope.infoMessage = "Event saved successfully!";
+            $timeout($scope.continueEditing, 1000);
 
-      var event = Events.get(id);
-      $scope.event = event;
-      $scope.saveDisabled = true;
+          })
+          .catch(function(error) {
 
-      // Format the dates when loaded
-      event.$loaded().then(function(ref){
-        $scope.saveDisabled = false;
-        $scope.event._start_date_form = new Date($scope.event.start_date);
-        $scope.event._end_date_form = new Date($scope.event.end_date);            
-      });
+            $scope.errorMessage = "There was an error trying to update the event: " + error.message;
+            
+          });
 
-    }
+      }
 
-    /*
-      Create a new event and shows the result from firebase.
-    */
-    function createEvent() {
-
-      $scope.event.created_at = Date.now();
-      $scope.event.created_by = currentAuth.uid;
-      
-      Events.list.$add($scope.event)
-        .then(function(ref) {
-          
-          $scope.saveDisabled = true;
-          $scope.infoMessage = "Event saved successfully! You can see it on the events list now.";
-
-          $scope.ref = ref.key;
-          loadEvent(ref.key);
-
-          $timeout($scope.continueEditing, 1000);
-
-        }).catch(function(error) {
-
-          $scope.errorMessage = "There was an error trying to create the event: " + error.message;
+      // Remove the info message to show the save button again 
+      // (but now it will be disabled because the event is bind to 
+      // the firebase object)
+      $scope.continueEditing = function() {
         
-        });
-    
-    }
-
-    /*
-      Save the current event
-    */
-    function updateEvent() {
-
-      $scope.event.$save()
-        .then(function(ref) {
-          
-          $scope.saveDisabled = true;
-          $scope.infoMessage = "Event saved successfully!";
-          $timeout($scope.continueEditing, 1000);
-
-        })
-        .catch(function(error) {
-
-          $scope.errorMessage = "There was an error trying to update the event: " + error.message;
-          
-        });
-
-    }
-
-    // Remove the info message to show the save button again 
-    // (but now it will be disabled because the event is bind to 
-    // the firebase object)
-    $scope.continueEditing = function() {
+        $scope.saveDisabled = false;
+        $scope.infoMessage = undefined;
       
-      $scope.saveDisabled = false;
-      $scope.infoMessage = undefined;
-    
-    }
+      }
 
   }]);
 
