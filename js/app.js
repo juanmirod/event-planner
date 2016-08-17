@@ -47,12 +47,15 @@ angular.module('planner', [
 
     // any time auth state changes, add the user data to scope
     $scope.auth.$onAuthStateChanged(function(firebaseUser) {
-      $scope.firebaseUser = firebaseUser;
-      //get the user info
-      Users.get(firebaseUser.uid).$loaded(function(userInfo){
-        $scope.firebaseUser.name = userInfo.name;
-        $scope.firebaseUser.bio = userInfo.bio;
-      })
+      
+      if(firebaseUser) {
+        $scope.firebaseUser = firebaseUser;
+        //get the user info
+        Users.get(firebaseUser.uid).$loaded(function(userInfo){
+          $scope.firebaseUser.name = userInfo.name;
+          $scope.firebaseUser.bio = userInfo.bio;
+        });
+      }
 
     });
 

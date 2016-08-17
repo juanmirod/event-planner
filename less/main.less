@@ -1,12 +1,49 @@
 @import "variables.less";
+@import 'https://fonts.googleapis.com/css?family=Open+Sans:300,400';
 
 body {
-  padding-top: 60px;
+  font-family: 'Open Sans', sans-serif;
+  padding-top: 50px;
+}
 
-  &.home {
-    background-image: url('../img/legocrowd.jpg');
-    background-position: center top;
-    background-repeat: no-repeat;
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 300;
+}
+
+footer {
+  margin-bottom: 20px;
+}
+
+.navbar-inverse {
+  background-color: #7B1FA2;
+  color: rgb(255, 255, 255, 0.87);
+
+  .navbar-toggle {
+    border-color: rgb(255, 255, 255, 0.87);
+
+    &:active, &:hover, &:focus, &:visited {
+      background-color: rgb(255, 255, 255, 0.87);
+      border-color: #7B1FA2;
+
+      .icon-bar {
+        background-color: #7B1FA2;
+      }
+    } 
+  }
+
+  .navbar-brand {
+    color: rgb(255, 255, 255, 0.87);
+  }
+
+  .navbar-nav {
+
+    li.active > a {
+      background-color: #4A148C;
+    }
+
+    li > a {
+      color: rgb(255, 255, 255, 0.87);
+    }
   }
 }
 
@@ -17,7 +54,7 @@ body {
 
 .heading-map {
   color: #ffffff;
-  background-color: rgba(50, 50, 50, 0.5);
+  background-color: #E040FB;
   border-radius: 2px;
   height: 470px;
   padding: 20px;
@@ -29,15 +66,49 @@ body {
 
 .panel {
   .panel-heading {
-    .date {
-      padding: 5px;
-      border-radius: 2px;
+    .dates-container {
+      display: inline-block;
+      margin-right: 5px;
+      .date-start {
+        padding: 7px 0px 7px 7px;
+        border-radius: 2px;  
+      }
+      .date-end {
+        padding: 7px 7px 7px 0px;
+        border-radius: 2px;
+      }
     }
   }
+}
+
+.event-icon {
+  width: 100%;
+
+  .glyphicon {
+    background-color: @input-bg-disabled;
+    color: @btn-primary-color;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 30px;
+    padding: 10px;
+  }
+}
+
+.form-header {
+  border-bottom: 1px solid #aaaaaa;
+  line-height: 50px;
 }
 
 @media (min-width: @screen-sm-min) {
   .map {
     height: 300px !important;
+  }
+}
+
+@media (min-width: @screen-lg-min) {
+  .event-icon {
+    .glyphicon {
+      font-size: 46px;
+    }
   }
 }

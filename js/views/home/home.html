@@ -3,7 +3,7 @@
   <div class="heading-map">
     <h1>Join an event: meet people, share, learn</h1>
     <h3>Next events on the world</h3>
-    <ng-map class="map" center="[32, -20]" zoom="2">
+    <ng-map class="map" center="[32, -20]" zoom="3">
       <marker ng-repeat="event in events" 
         position="{{ event.location }}"
         animation="DROP"
@@ -21,26 +21,47 @@
   <div class="col-sm-6" ng-repeat="event in events">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <span class="date bg-primary">{{ event.start_date | date: 'dd MMM' }}</span> 
-        {{ event.title }}
+        <div class="dates-container">
+          <span class="date-start bg-success">{{ event.start_date | date: 'dd MMM' }} -</span><span class="date-end bg-danger">- {{ event.end_date | date: 'dd MMM' }}</span> 
+        </div>
+        <strong>{{ event.title }}</strong>
       </div>
       <div class="panel-body">
         <div class="row">
           <div class="col-xs-2">
-            <img class="img-circle img-responsive center-block" src="http://placehold.it/200/e91e63/ffffff" alt="Event miniature">
+            <div class="event-icon">
+              <span aria-hidden="true" 
+                    class="glyphicon {{ eventIcon(event) }}"> 
+              </span>
+            </div>
           </div>
           <div class="col-xs-10">
-            <p>{{ event.host }} - {{ event.created_at | date : 'medium' }}</p>
+            <h4>
+              Host: {{ event.host }}
+              <br>
+              <small>Created: {{ event.created_at | date : 'medium' }}</small>
+            </h4>
+            <button ng-click="toggleMap(event)" class="btn btn-xs btn-info">Location: {{ event.location }}</button>
+            <hr>
+            <div ng-if="event._showMap">
+                <ng-map center="{{ event.location }}" zoom="13">
+                  <marker position="{{ event.location }}"
+                    animation="DROP"
+                    draggable="false"
+                    title="{{ event.title }}"> 
+                  </marker>
+                </ng-map>
+                <hr>
+            </div>
             <p>{{ event.description }}</p>
+            <p>Guests List: {{ event.guests }}</p>
           </div>
         </div>
       </div>
-      <div class="panel-footer align-right">
+      <div class="panel-footer align-right" ng-show="userHasCreated(event, firebaseUser)">
         <div class="btn-toolbar" role="toolbar">
-          <button class="btn btn-primary btn-sm pull-right">
-            Join!
-          </button>
-          <a class="btn btn-default btn-sm pull-right"
+          <a ng-show="userHasCreated(event, firebaseUser)"
+             class="btn btn-default btn-sm pull-right"
              href="#!/edit/{{ event.$id }}">
             View
           </a>

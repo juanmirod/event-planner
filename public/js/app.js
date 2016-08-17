@@ -47,12 +47,15 @@ angular.module('planner', [
 
     // any time auth state changes, add the user data to scope
     $scope.auth.$onAuthStateChanged(function(firebaseUser) {
-      $scope.firebaseUser = firebaseUser;
-      //get the user info
-      Users.get(firebaseUser.uid).$loaded(function(userInfo){
-        $scope.firebaseUser.name = userInfo.name;
-        $scope.firebaseUser.bio = userInfo.bio;
-      })
+      
+      if(firebaseUser) {
+        $scope.firebaseUser = firebaseUser;
+        //get the user info
+        Users.get(firebaseUser.uid).$loaded(function(userInfo){
+          $scope.firebaseUser.name = userInfo.name;
+          $scope.firebaseUser.bio = userInfo.bio;
+        });
+      }
 
     });
 
@@ -392,6 +395,16 @@ angular.module('planner', [
    
   angular.module('planner.home', ['firebaseAPI', 'ngRoute', 'ngMap'])
 
+  .constant('EventTypes', [
+    {name: 'Conference',      icon: 'glyphicon-user'},
+    {name: 'Company Meet-up', icon: 'glyphicon-user'},
+    {name: 'Sport event',     icon: 'glyphicon-flag'},
+    {name: 'Birthday Party',  icon: 'glyphicon-gift'},
+    {name: 'Wedding',         icon: 'glyphicon-heart'},
+    {name: 'Newborn party',         icon: 'glyphicon-baby-formula'},
+    {name: 'Pokemon Championship',  icon: 'glyphicon-star'},
+  ])
+
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
       templateUrl: 'js/views/home/home.html',
@@ -405,10 +418,66 @@ angular.module('planner', [
     });
   }])
 
-  .controller('HomeCtrl', ['$rootScope', '$scope', 'Events', 'currentAuth', function($rootScope, $scope, Events, currentAuth) {
+  .controller('HomeCtrl', ['$rootScope', '$scope', 'Events', 'currentAuth', 'EventTypes',
+    function($rootScope, $scope, Events, currentAuth, EventTypes) {
 
     $rootScope.authUser = currentAuth;
+
+    function byDate(eventA, eventB) {
+      
+      if (eventA.start_date < eventB.start_date) {
+        return -1;
+      }
+
+      if (eventA.start_date > eventB.start_date) {
+        return 1;
+      }
+      
+      return 0;
+
+    }
+
+    $scope.toggleMap = function(event) {
+      
+      if(event._showMap) {
+        event._showMap = false;
+      } else {
+        event._showMap = true;
+      }
+
+    }
+
+    $scope.userHasCreated = function(event, user) {
+    
+      if(user && event.created_by) {
+        return event.created_by == user.uid;
+      }
+
+      return false;
+    
+    }
+
+    $scope.eventIcon = function(event) {
+     
+      // default icon
+      var icon = 'glyphicon-map-marker';
+
+      EventTypes.some(function(eventType){
+        if(eventType.name == event.type) {
+          icon = eventType.icon;
+        }
+      });
+
+      return icon;
+    
+    }
+
+    // sort the list of events by date
+    Events.list.sort(byDate);
     $scope.events = Events.list;
+
+    // each time the server sends records, re-sort
+    Events.list.$watch(function() { Events.list.sort(byDate); });
 
   }]);
 
