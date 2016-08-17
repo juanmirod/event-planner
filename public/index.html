@@ -52,14 +52,14 @@
         </ul>
         
         <ul ng-hide="firebaseUser" class="nav navbar-nav navbar-right">
-          <li><a href="#!/login">Login</a></li>
-          <li><a href="#!/signup">Sign-up</a></li>
+          <li><a href="#!/login">Sign in</a></li>
+          <li><a href="#!/signup">Sign up</a></li>
         </ul>
 
         <ul ng-show="firebaseUser" class="nav navbar-nav navbar-right">
           <li>
             <a href="#!/" ng-click="auth.$signOut()">
-              <span ng-if="firebaseUser">{{ user.name }} - </span>Logout
+              <span ng-if="firebaseUser">{{ firebaseUser.name }} - </span>Logout
             </a>
           </li>
         </ul>

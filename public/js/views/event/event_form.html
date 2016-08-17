@@ -110,6 +110,21 @@
               This field is required. You can use a full address or just a city name.
             </span>
           </div>
+          <div class="form-group" ng-class="{'has-error': form.$submitted && !form.guests.$valid}">
+            <label for="description">
+              Guests List
+            </label>
+            <textarea class="form-control"
+                      placeholder="Peter Smith, John Doe, Mr Fancy Pants"
+                      id="guests"
+                      name="guests"
+                      ng-model="event.guests"
+                      required>
+            </textarea>
+            <span class="help-block" ng-show="form.$submitted && !form.guests.$valid">
+              This field is required. If you don't want to have a guests list you can write "Public".
+            </span>
+          </div>
           <div class="form-group">
             <label for="description">
               More Info (optional)

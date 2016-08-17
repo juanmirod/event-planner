@@ -34,13 +34,19 @@
   
   }
 
-  function Users(RootRef, $firebaseObject) {
+  function Users(RootRef, $firebaseArray, $firebaseObject) {
 
     var usersRef = RootRef.child('users');
+
+    this.list = $firebaseArray(usersRef);
 
     this.get = function get(id) {
       return $firebaseObject(usersRef.child(id));
     };
+
+    this.newUser = function newUser(id) {
+      return  usersRef.child(id);
+    }
 
   }
 

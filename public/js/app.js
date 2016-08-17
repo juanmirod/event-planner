@@ -37,8 +37,8 @@ angular.module('planner', [
 
   }])
 
-.controller('AppController', ['$rootScope', '$scope', '$location', 'Auth',
-  function($rootsScope, $scope, $location, Auth) {
+.controller('AppController', ['$rootScope', '$scope', '$location', 'Auth', 'Users',
+  function($rootsScope, $scope, $location, Auth, Users) {
     
     $scope.auth = Auth;
 
@@ -47,8 +47,13 @@ angular.module('planner', [
 
     // any time auth state changes, add the user data to scope
     $scope.auth.$onAuthStateChanged(function(firebaseUser) {
-      console.log(firebaseUser);
       $scope.firebaseUser = firebaseUser;
+      //get the user info
+      Users.get(firebaseUser.uid).$loaded(function(userInfo){
+        $scope.firebaseUser.name = userInfo.name;
+        $scope.firebaseUser.bio = userInfo.bio;
+      })
+
     });
 
     // Every time the user changes the view, we must collapse the menu
@@ -95,13 +100,19 @@ angular.module('planner', [
   
   }
 
-  function Users(RootRef, $firebaseObject) {
+  function Users(RootRef, $firebaseArray, $firebaseObject) {
 
     var usersRef = RootRef.child('users');
+
+    this.list = $firebaseArray(usersRef);
 
     this.get = function get(id) {
       return $firebaseObject(usersRef.child(id));
     };
+
+    this.newUser = function newUser(id) {
+      return  usersRef.child(id);
+    }
 
   }
 
@@ -403,16 +414,46 @@ angular.module('planner', [
     });
   }])
 
-  .controller('SignupCtrl', ['$rootScope', '$scope', 'Auth', function($rootScope, $scope, Auth) {
+  .controller('SignupCtrl', ['$rootScope', '$scope', '$location', 'Auth', 'Users',
+    function($rootScope, $scope, $location, Auth, Users) {
 
     $scope.submitHandler = function(form) {
 
       if(form.$valid) {
         Auth.$createUserWithEmailAndPassword($scope.user.email, $scope.user.password)
           .then(function(firebaseUser) {
-            $rootScope.authUser = firebaseUser;
-          }).catch(function(error) {
+            
+            // keep the reference to remove if the next step fails
+            $scope.firebaseUser = firebaseUser;
+            console.log(firebaseUser);
+            // Store the user name and bio as a new object
+            return Users.newUser(firebaseUser.uid)
+              .set({
+                name: $scope.user.name,
+                bio: $scope.user.bio || '' 
+              });
+
+          })
+          .then(function(userData) {
+
+            $location.path('/');
+
+          })
+          .catch(function(error) {
+            
             $scope.authError = "There was an error trying to create the user: " + error.message;
+
+            if(typeof($scope.firebaseUser) != 'undefined') {
+
+              // there was an error, rollback so the user can use the same email
+              $scope.firebaseUser.delete()
+                .catch(function(error) {
+                  console.log('Removing the user with errors failed, time to go home...');
+                  $scope.authError += error;
+                });
+
+            }
+          
           });
       }
       

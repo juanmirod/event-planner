@@ -1,44 +1,52 @@
 
-<div class="heading-map">
-  <h1>Join an event: meet people, share, learn</h1>
-  <h3>Next events on the world</h3>
-  <ng-map class="map" center="[32, -20]" zoom="2">
-    <marker ng-repeat="event in events" 
-      position="{{ event.location }}"
-      animation="DROP"
-      draggable="false"
-      title="{{ event.title }}"> 
-    </marker>
-  </ng-map>
+<div class="row">
+  <div class="heading-map">
+    <h1>Join an event: meet people, share, learn</h1>
+    <h3>Next events on the world</h3>
+    <ng-map class="map" center="[32, -20]" zoom="2">
+      <marker ng-repeat="event in events" 
+        position="{{ event.location }}"
+        animation="DROP"
+        draggable="false"
+        title="{{ event.title }}"> 
+      </marker>
+    </ng-map>
+  </div>
 </div>
 <hr>
-<h3>List of events, sorted by date</h3>
-<div class="panel panel-default" ng-repeat="event in events">
-  <div class="panel-heading">
-    <span class="date bg-primary">{{ event.start_date | date: 'dd MMM' }}</span> 
-    {{ event.title }}
-  </div>
-  <div class="panel-body">
-    <div class="row">
-      <div class="col-xs-2">
-        <img class="img-circle img-responsive center-block" src="http://placehold.it/200/e91e63/ffffff" alt="Event miniature">
+<div class="row">
+  <h3 class="col-xs-12">List of events, sorted by date</h3>  
+</div>
+<div class="row">
+  <div class="col-sm-6" ng-repeat="event in events">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span class="date bg-primary">{{ event.start_date | date: 'dd MMM' }}</span> 
+        {{ event.title }}
       </div>
-      <div class="col-xs-10">
-        <p>{{ event.host }} - {{ event.created_at | date : 'medium' }}</p>
-        <p>{{ event.description }}</p>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-xs-2">
+            <img class="img-circle img-responsive center-block" src="http://placehold.it/200/e91e63/ffffff" alt="Event miniature">
+          </div>
+          <div class="col-xs-10">
+            <p>{{ event.host }} - {{ event.created_at | date : 'medium' }}</p>
+            <p>{{ event.description }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel-footer align-right">
+        <div class="btn-toolbar" role="toolbar">
+          <button class="btn btn-primary btn-sm pull-right">
+            Join!
+          </button>
+          <a class="btn btn-default btn-sm pull-right"
+             href="#!/edit/{{ event.$id }}">
+            View
+          </a>
+        </div>
+        <div class="clearfix"></div>
       </div>
     </div>
-  </div>
-  <div class="panel-footer align-right">
-    <div class="btn-toolbar" role="toolbar">
-      <button class="btn btn-primary btn-sm pull-right">
-        Join!
-      </button>
-      <a class="btn btn-default btn-sm pull-right"
-         href="#!/edit/{{ event.$id }}">
-        View
-      </a>
-    </div>
-    <div class="clearfix"></div>
   </div>
 </div>
