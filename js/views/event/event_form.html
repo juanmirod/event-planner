@@ -6,7 +6,7 @@
 <div class="row">
  <div class="col-sm-6 col-sm-offset-3">
     <form class="form" name="form" novalidate>
-      <div class="form-group" ng-class="{'has-error': form.$submitted && !form.title.$valid}">
+      <div class="form-group" ng-class="{'has-error': form.title.$touched && !form.title.$valid}">
         <label for="title">
           Title
         </label>
@@ -16,12 +16,13 @@
                 id="title"
                 name="title"
                 ng-model="event.title"
-                required>
-        <span class="help-block" ng-show="form.$submitted && !form.title.$valid">
+                required
+                autofocus="">
+        <span class="help-block" ng-show="form.title.$touched && !form.title.$valid">
           This field is required, What is the name of the event?  
         </span>
       </div>
-      <div class="form-group" ng-class="{'has-error': form.$submitted && !form.host.$valid}">
+      <div class="form-group" ng-class="{'has-error': form.host.$touched && !form.host.$valid}">
         <label for="host">
           Host
         </label>
@@ -32,11 +33,11 @@
                 name="host"
                 ng-model="event.host"
                 required>
-        <span class="help-block" ng-show="form.$submitted && !form.host.$valid">
+        <span class="help-block" ng-show="form.host.$touched && !form.host.$valid">
           This field is required, Who is organizing the event?
         </span>
       </div>
-      <div class="form-group" ng-class="{'has-error': form.$submitted && !form.type.$valid}">
+      <div class="form-group" ng-class="{'has-error': form.type.$touched && !form.type.$valid}">
         <label class="control-label" for="type">
           Type
         </label>
@@ -48,9 +49,6 @@
                  name="type"
                  ng-model="event.type"
                  required>
-          <span class="help-block" ng-show="form.$submitted && !form.type.$valid">
-            This field is required, You can choose one of the default types or just write your own.  
-          </span>
           <datalist id="event-types">
             <option value="Conference"></option>
             <option value="Company meet-up"></option>
@@ -61,9 +59,12 @@
             <option value="Pokemon Championship"></option>
           </datalist>
         </div>
+        <span class="help-block" ng-show="form.type.$touched && !form.type.$valid">
+          This field is required, You can choose one of the default types or just write your own.  
+        </span>
       </div>
       <div class="row">
-      <div class="form-group col-sm-6" ng-class="{'has-error': form.$submitted && !form.startdate.$valid}">
+      <div class="form-group col-sm-6" ng-class="{'has-error': form.startdate.$touched && !form.startdate.$valid}">
         <label for="startdate">
           Start date and time
         </label>
@@ -74,11 +75,11 @@
                ng-model="event._start_date_form"
                placeholder="yyyy-MM-ddTHH:mm:ss" 
                required>
-        <span class="help-block" ng-show="form.$submitted && !form.startdate.$valid">
+        <span class="help-block" ng-show="form.startdate.$touched && !form.startdate.$valid">
           This field is required. Maybe your date is not in the right format (yyyy-MM-ddTHH:mm:ss)?
         </span>
       </div>
-      <div class="form-group col-sm-6" ng-class="{'has-error': form.$submitted && !form.enddate.$valid}">
+      <div class="form-group col-sm-6" ng-class="{'has-error': form.enddate.$touched && !form.enddate.$valid}">
         <label for="enddate">
           End date and time
         </label>
@@ -89,12 +90,12 @@
                ng-model="event._end_date_form"
                placeholder="yyyy-MM-ddTHH:mm:ss" 
                required>
-        <span class="help-block" ng-show="form.$submitted && !form.enddate.$valid">
+        <span class="help-block" ng-show="form.enddate.$touched && !form.enddate.$valid">
           This field is required. Maybe your date is not in the right format (yyyy-MM-ddTHH:mm:ss)?
         </span>
       </div>
       </div>
-      <div class="form-group" ng-class="{'has-error': form.$submitted && !form.location.$valid}">
+      <div class="form-group" ng-class="{'has-error': form.location.$touched && !form.location.$valid}">
         <label for="location">
           Location
         </label>
@@ -114,12 +115,13 @@
         <span class="help-block" ng-show="located">
           <span class="text-success"> This should be your current location, is it ok? You can drag the marker to change the coordinates or write an address in the textbox.</span>
         </span>
-        <span class="help-block" ng-show="form.$submitted && !form.location.$valid">
+        <span class="help-block" ng-show="form.location.$touched && !form.location.$valid">
           This field is required. You can use a full address or just a city name.
         </span>
         <div class="help-block">
           <ng-map>
-            <marker position="{{ event.location }}"
+            <marker centered 
+              position="{{ event.location.replace('(','[').replace(')',']') }}"
               animation="DROP"
               draggable="true"
               on-dragend="locationChangedHandler()"
@@ -128,7 +130,7 @@
           </ng-map>
         </div>
       </div>
-      <div class="form-group" ng-class="{'has-error': form.$submitted && !form.guests.$valid}">
+      <div class="form-group" ng-class="{'has-error': form.guests.$touched && !form.guests.$valid}">
         <label for="description">
           Guests List
         </label>
@@ -139,7 +141,7 @@
                   ng-model="event.guests"
                   required>
         </textarea>
-        <span class="help-block" ng-show="form.$submitted && !form.guests.$valid">
+        <span class="help-block" ng-show="form.guests.$touched && !form.guests.$valid">
           This field is required. If you don't want to have a guests list you can write "Public".
         </span>
       </div>

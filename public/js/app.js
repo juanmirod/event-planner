@@ -55,6 +55,8 @@ angular.module('planner', [
           $scope.firebaseUser.name = userInfo.name;
           $scope.firebaseUser.bio = userInfo.bio;
         });
+      } else {
+        $scope.firebaseUser = undefined;
       }
 
     });
