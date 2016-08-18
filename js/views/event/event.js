@@ -1,7 +1,7 @@
 (function () { 
 'use strict';
 
-  angular.module('planner.event', ['ngRoute', 'firebase', 'firebaseAPI'])
+  angular.module('planner.event', ['ngRoute', 'ngMap', 'firebase', 'firebaseAPI'])
 
   .constant('EventTypes', [
     {name: 'Conference',      icon: 'glyphicon-user'},

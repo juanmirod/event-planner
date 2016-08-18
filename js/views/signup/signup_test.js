@@ -46,6 +46,7 @@ describe('planner.signup module', function() {
           $rootScope: rootScope,
           $scope: scope,
           Auth: Auth,
+          Users: [],
           $stateParams: params || {}
         });
       };
