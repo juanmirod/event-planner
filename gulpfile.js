@@ -82,6 +82,11 @@ gulp.task('buildjs', function() {
   gulp.src('js/**/*.html')
     .pipe(gulp.dest('./public/js'));
 
+  // copy dev.html to index.html
+  gulp.src('./public/dev.html')
+    .pipe(concat('index.html'))
+    .pipe(gulp.dest('./public/'));
+
   gulp.src([
     'bower_components/firebase/firebase.js',
     'bower_components/angular/angular.js',
@@ -125,15 +130,19 @@ gulp.task('testrunner', ['tests'], function() {
 
 ///////////////////////////// LIVE RELOADING ////////////////////////////////////////
 
-/* 
-  The default task runs browserSync server and watches for changes 
-  in css, js or html to reload the browser.
-  */
-gulp.task('default', ['styles', 'buildjs'], function() {
+gulp.task('server', function(){
 
   browserSync.init({
     server: './'
   });
+
+});
+
+/* 
+  The default task runs browserSync server and watches for changes 
+  in css, js or html to reload the browser.
+  */
+gulp.task('default', ['server', 'styles', 'buildjs'], function() {
 
   gulp.watch('less/**/*.less', ['styles']);
 
@@ -171,4 +180,9 @@ gulp.task('build', ['styles'], function(){
     .pipe(concat('vendor.min.js'))
     .pipe(gulp.dest('./public/js'));
 
+  // modify index to use minified files
+  gulp.src('./public/index.html')
+    .pipe(replace('vendor.js', 'vendor.min.js'))
+    .pipe(replace('app.js', 'app.min.js'))
+    .pipe(gulp.dest('./public/'))
 });
