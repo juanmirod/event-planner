@@ -7,7 +7,6 @@ angular.module('planner', [
     'ngAnimate',
     'ui.bootstrap.collapse',
     'ui.bootstrap.tpls',
-    'LocalStorageModule',
     'planner.login',
     'planner.signup',
     'planner.home',
@@ -26,14 +25,11 @@ angular.module('planner', [
     });
   }])
 
-.config(['$locationProvider', '$routeProvider', 'localStorageServiceProvider',
-  function($locationProvider, $routeProvider, localStorageServiceProvider) {
+.config(['$locationProvider', '$routeProvider', 
+  function($locationProvider, $routeProvider) {
     
     $locationProvider.hashPrefix('!');
     $routeProvider.otherwise({redirectTo: '/'});
-
-    localStorageServiceProvider
-      .setPrefix('planner');
 
   }])
 
@@ -88,50 +84,49 @@ angular.module('planner', [
   angular.module('firebaseAPI', [])
 
     .constant('FirebaseUrl', 'https://udacity-event-planner-7ce8e.firebaseio.com')
-    .service('RootRef', RootRef)
-    .service('Users', Users)
-    .service('Events', Events)
-    .factory("Auth", FirebaseAuth);
-
-  function FirebaseAuth($firebaseAuth) {
     
-    return $firebaseAuth();
+    .service('RootRef', function RootRef() {
   
-  }
-
-  function RootRef() {
-  
-    return firebase.database().ref();
-  
-  }
-
-  function Users(RootRef, $firebaseArray, $firebaseObject) {
-
-    var usersRef = RootRef.child('users');
-
-    this.list = $firebaseArray(usersRef);
-
-    this.get = function get(id) {
-      return $firebaseObject(usersRef.child(id));
-    };
-
-    this.newUser = function newUser(id) {
-      return  usersRef.child(id);
-    }
-
-  }
-
-  function Events(RootRef, $firebaseArray,  $firebaseObject) {
-
-    var eventsRef = RootRef.child('events');
+      return firebase.database().ref();
     
-    this.list = $firebaseArray(eventsRef);
+    })
 
-    this.get = function get(id) {
-      return $firebaseObject(eventsRef.child(id));
-    };
+    .service('Users', ['RootRef', '$firebaseArray', '$firebaseObject', 
+      function Users(RootRef, $firebaseArray, $firebaseObject) {
 
-  }
+        var usersRef = RootRef.child('users');
+
+        this.list = $firebaseArray(usersRef);
+
+        this.get = function get(id) {
+          return $firebaseObject(usersRef.child(id));
+        };
+
+        this.newUser = function newUser(id) {
+          return  usersRef.child(id);
+        }
+
+      }])
+
+    .service('Events', ['RootRef', '$firebaseArray', '$firebaseObject', 
+      function Events(RootRef, $firebaseArray,  $firebaseObject) {
+
+        var eventsRef = RootRef.child('events');
+        
+        this.list = $firebaseArray(eventsRef);
+
+        this.get = function get(id) {
+          return $firebaseObject(eventsRef.child(id));
+        };
+
+      }])
+    
+    .factory("Auth", ['$firebaseAuth', function FirebaseAuth($firebaseAuth) {
+    
+      return $firebaseAuth();
+  
+    }]);
+
 })();
 (function () {
 'use strict';
@@ -304,7 +299,7 @@ angular.module('planner', [
           $scope.triedLocation = true;
           navigator.geolocation.getCurrentPosition(
             function(location){
-              $scope.event.location = '(' + location.coords.latitude + ', ' + location.coords.longitude +')';
+              $scope.event.location = '[' + location.coords.latitude + ', ' + location.coords.longitude +']';
               $scope.located = true;
               $scope.$apply();
               $scope.map.setCenter({lat: location.coords.latitude, lng: location.coords.longitude});
@@ -502,47 +497,6 @@ angular.module('planner', [
 (function () { 
 'use strict';
 
-  angular.module('planner.login', ['ngRoute', 'firebaseAPI'])
-
-  .config(['$routeProvider', function($routeProvider) {
-    $routeProvider.when('/login', {
-      templateUrl: 'js/views/login/login.html',
-      controller: 'LoginCtrl',
-      resolve: {
-        // controller will not be loaded until $waitForSignIn resolves
-        "currentAuth": ["Auth", function(Auth) {
-          return Auth.$waitForSignIn();
-        }]
-      }
-    });
-  }])
-
-  .controller('LoginCtrl', ['$rootScope', '$scope', 'Auth', '$location',
-    function($rootScope, $scope, Auth, $location) {
-      $scope.email = '';
-      $scope.password = '';
-
-      $scope.submitHandler = function(form) {
-
-        if(form.$valid) {
-          var request = Auth.$signInWithEmailAndPassword($scope.email, $scope.password)
-          
-          request.then(function(firebaseUser) {
-              $location.path("/");
-            })
-            .catch(function(error) {
-              $scope.error = "Authentication failed: " + error;
-            });
-        }
-
-      };
-
-  }]);
-
-})();
-(function () { 
-'use strict';
-
   angular.module('planner.signup', ['ngRoute', 'planner.validators', 'firebaseAPI'])
 
   .config(['$routeProvider', function($routeProvider) {
@@ -596,6 +550,47 @@ angular.module('planner', [
       }
       
     };
+
+  }]);
+
+})();
+(function () { 
+'use strict';
+
+  angular.module('planner.login', ['ngRoute', 'firebaseAPI'])
+
+  .config(['$routeProvider', function($routeProvider) {
+    $routeProvider.when('/login', {
+      templateUrl: 'js/views/login/login.html',
+      controller: 'LoginCtrl',
+      resolve: {
+        // controller will not be loaded until $waitForSignIn resolves
+        "currentAuth": ["Auth", function(Auth) {
+          return Auth.$waitForSignIn();
+        }]
+      }
+    });
+  }])
+
+  .controller('LoginCtrl', ['$rootScope', '$scope', 'Auth', '$location',
+    function($rootScope, $scope, Auth, $location) {
+      $scope.email = '';
+      $scope.password = '';
+
+      $scope.submitHandler = function(form) {
+
+        if(form.$valid) {
+          var request = Auth.$signInWithEmailAndPassword($scope.email, $scope.password)
+          
+          request.then(function(firebaseUser) {
+              $location.path("/");
+            })
+            .catch(function(error) {
+              $scope.error = "Authentication failed: " + error;
+            });
+        }
+
+      };
 
   }]);
 

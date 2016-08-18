@@ -7,7 +7,6 @@ angular.module('planner', [
     'ngAnimate',
     'ui.bootstrap.collapse',
     'ui.bootstrap.tpls',
-    'LocalStorageModule',
     'planner.login',
     'planner.signup',
     'planner.home',
@@ -26,14 +25,11 @@ angular.module('planner', [
     });
   }])
 
-.config(['$locationProvider', '$routeProvider', 'localStorageServiceProvider',
-  function($locationProvider, $routeProvider, localStorageServiceProvider) {
+.config(['$locationProvider', '$routeProvider', 
+  function($locationProvider, $routeProvider) {
     
     $locationProvider.hashPrefix('!');
     $routeProvider.otherwise({redirectTo: '/'});
-
-    localStorageServiceProvider
-      .setPrefix('planner');
 
   }])
 

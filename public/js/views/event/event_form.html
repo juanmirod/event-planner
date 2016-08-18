@@ -121,7 +121,7 @@
         <div class="help-block">
           <ng-map>
             <marker centered 
-              position="{{ event.location.replace('(','[').replace(')',']') }}"
+              position="{{ event.location }}"
               animation="DROP"
               draggable="true"
               on-dragend="locationChangedHandler()"

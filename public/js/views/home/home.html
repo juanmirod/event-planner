@@ -3,7 +3,7 @@
   <div class="heading-map">
     <h1>Join an event: meet people, share, learn</h1>
     <h3>Next events on the world</h3>
-    <ng-map class="map" center="[32, -20]" zoom="3">
+    <ng-map class="map" center="[32, -20]" zoom="3" aria-hidden="true">
       <marker ng-repeat="event in events" 
         position="{{ event.location }}"
         animation="DROP"
@@ -43,7 +43,7 @@
             </h4>
             <button ng-click="toggleMap(event)" class="btn btn-xs btn-info">Location: {{ event.location }}</button>
             <hr>
-            <div ng-if="event._showMap">
+            <div ng-if="event._showMap" aria-hidden="true">
                 <ng-map center="{{ event.location }}" zoom="13">
                   <marker position="{{ event.location }}"
                     animation="DROP"

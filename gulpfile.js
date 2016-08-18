@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
-//var uglify = require('uglify');
+var uglify = require('gulp-uglify');
+var replace = require('gulp-replace');
 //var order = require('order');
 var less = require('gulp-less');
 var LessAutoprefix = require('less-plugin-autoprefix');
@@ -88,7 +89,6 @@ gulp.task('buildjs', function() {
     'bower_components/angular-route/angular-route.js',
     'bower_components/angularfire/dist/angularfire.js',
     'bower_components/ngmap/build/scripts/ng-map.min.js',
-    'bower_components/angular-local-storage/dist/angular-local-storage.js',
     'bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
     ])
     .pipe(concat('vendor.js'))
@@ -132,7 +132,7 @@ gulp.task('testrunner', ['tests'], function() {
 gulp.task('default', ['styles', 'buildjs'], function() {
 
   browserSync.init({
-    server: './public/'
+    server: './'
   });
 
   gulp.watch('less/**/*.less', ['styles']);
@@ -145,5 +145,30 @@ gulp.task('default', ['styles', 'buildjs'], function() {
     'public/js/**/*.html',
     'public/index.html'
     ], ['reload']);
+
+});
+
+//////////////////////////////// BUILD FOR PRODUCTION /////////////////////////////////////
+gulp.task('build', ['styles'], function(){
+
+  gulp.src('js/**/!(*_test).js')
+    .pipe(concat('app.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('./public/js'));
+
+  gulp.src('js/**/*.html')
+    .pipe(gulp.dest('./public/js'));
+
+  gulp.src([
+    'bower_components/firebase/firebase.js',
+    'bower_components/angular/angular.min.js',
+    'bower_components/angular-animate/angular-animate.min.js',
+    'bower_components/angular-route/angular-route.min.js',
+    'bower_components/angularfire/dist/angularfire.min.js',
+    'bower_components/ngmap/build/scripts/ng-map.min.js',
+    'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'
+    ])
+    .pipe(concat('vendor.min.js'))
+    .pipe(gulp.dest('./public/js'));
 
 });
