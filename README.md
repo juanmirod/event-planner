@@ -8,7 +8,49 @@ service are used to help the user fill in the required inputs.
 The application is built with AngularJS + Bootstrap, Gulp for the build process, test runner and development mode
 and Firebase Authentication and database services for backend. 
 
-## Requirements of the exercise:
+## Requirements
+
+You need node and npm installed on the system, also gulp-cli installed globally to run the gulp command
+without messy paths.
+
+## Install and Run instructions
+
+To install the project locally you just have to clone the repository:
+
+```
+$> git clone https://github.com/juanmirod/event-planner.git
+```
+
+And run npm install:
+
+```
+$> npm install
+```
+
+To run build the js and run the server:
+
+```
+$> gulp build
+$> gulp server
+``` 
+
+You will need to add 'public/' to the browser address because I am using the 'base' tag to serve the 
+application from github pages, I didn't find a workaround for this yet, sorry. So the path to see the 
+application should be:
+
+```
+localhost:3000/public/
+```
+
+To run the server in development mode, watching for changes in js and css just run gulp default task:
+
+```
+$> gulp
+```
+
+Enjoy!
+
+## Requirements of the exercise (as a personal reminder):
 
 You do not need to create a functioning back-end or save user information. Only the form components themselves and their performance will be evaluated.
 
