@@ -1,6 +1,6 @@
 <div class="row">
   <h2 class="form-header col-sm-6 col-sm-offset-3">
-    Tell everbody about your event
+    Tell everone about your event
   </h2>
 </div>
 <div class="row">
@@ -37,27 +37,30 @@
         </span>
       </div>
       <div class="form-group" ng-class="{'has-error': form.$submitted && !form.type.$valid}">
-        <label for="type">
+        <label class="control-label" for="type">
           Type
         </label>
-        <input list="event-types" 
-               class="form-control"
-               id="type"
-               name="type"
-               ng-model="event.type"
-               required>
-        <span class="help-block" ng-show="form.$submitted && !form.type.$valid">
-          This field is required, You can choose one of the default types or just write your own.  
-        </span>
-        <datalist id="event-types">
-          <option value="Conference"></option>
-          <option value="Company meet-up"></option>
-          <option value="Sport event"></option>
-          <option value="Birthday party"></option>
-          <option value="Wedding"></option>
-          <option value="Newborn party"></option>
-          <option value="Pokemon Championship"></option>
-        </datalist>
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon {{ eventIcon(event) }}"></span></span>
+          <input list="event-types" 
+                 class="form-control"
+                 id="type"
+                 name="type"
+                 ng-model="event.type"
+                 required>
+          <span class="help-block" ng-show="form.$submitted && !form.type.$valid">
+            This field is required, You can choose one of the default types or just write your own.  
+          </span>
+          <datalist id="event-types">
+            <option value="Conference"></option>
+            <option value="Company meet-up"></option>
+            <option value="Sport event"></option>
+            <option value="Birthday party"></option>
+            <option value="Wedding"></option>
+            <option value="Newborn party"></option>
+            <option value="Pokemon Championship"></option>
+          </datalist>
+        </div>
       </div>
       <div class="row">
       <div class="form-group col-sm-6" ng-class="{'has-error': form.$submitted && !form.startdate.$valid}">

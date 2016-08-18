@@ -1,17 +1,7 @@
 (function () {
 'use strict';
    
-  angular.module('planner.home', ['firebaseAPI', 'ngRoute', 'ngMap'])
-
-  .constant('EventTypes', [
-    {name: 'Conference',      icon: 'glyphicon-user'},
-    {name: 'Company Meet-up', icon: 'glyphicon-user'},
-    {name: 'Sport event',     icon: 'glyphicon-flag'},
-    {name: 'Birthday Party',  icon: 'glyphicon-gift'},
-    {name: 'Wedding',         icon: 'glyphicon-heart'},
-    {name: 'Newborn party',         icon: 'glyphicon-baby-formula'},
-    {name: 'Pokemon Championship',  icon: 'glyphicon-star'},
-  ])
+  angular.module('planner.home', ['firebaseAPI', 'ngRoute', 'ngMap', 'planner.event'])
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {

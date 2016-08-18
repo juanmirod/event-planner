@@ -59,13 +59,12 @@
         </div>
       </div>
       <div class="panel-footer align-right" ng-show="userHasCreated(event, firebaseUser)">
-        <div class="btn-toolbar" role="toolbar">
-          <a ng-show="userHasCreated(event, firebaseUser)"
-             class="btn btn-default btn-sm pull-right"
-             href="#!/edit/{{ event.$id }}">
-            View
-          </a>
-        </div>
+        You created this event
+        <a ng-show="userHasCreated(event, firebaseUser)"
+           class="btn btn-default btn-sm pull-right"
+           href="#!/edit/{{ event.$id }}">
+          Edit
+        </a>
         <div class="clearfix"></div>
       </div>
     </div>
