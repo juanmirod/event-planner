@@ -108,7 +108,7 @@
           $scope.triedLocation = true;
           navigator.geolocation.getCurrentPosition(
             function(location){
-              $scope.event.location = '(' + location.coords.latitude + ', ' + location.coords.longitude +')';
+              $scope.event.location = '[' + location.coords.latitude + ', ' + location.coords.longitude +']';
               $scope.located = true;
               $scope.$apply();
               $scope.map.setCenter({lat: location.coords.latitude, lng: location.coords.longitude});
