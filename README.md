@@ -10,8 +10,7 @@ and Firebase Authentication and database services for backend.
 
 ## Requirements
 
-You need node and npm installed on the system, also gulp-cli installed globally to run the gulp command
-without messy paths.
+You need node and npm installed on the system, also gulp-cli and bower installed globally to run gulp and bower without node_modules/... paths.
 
 ## Install and Run instructions
 
@@ -21,10 +20,11 @@ To install the project locally you just have to clone the repository:
 $> git clone https://github.com/juanmirod/event-planner.git
 ```
 
-And run npm install:
+And run npm install and bower install:
 
 ```
 $> npm install
+$> bower install
 ```
 
 To run build the js and run the server:
