@@ -1,4 +1,4 @@
-(function () { 
+(function (angular) { 
 'use strict';
 
   angular.module('planner.signup', ['ngRoute', 'planner.validators', 'firebaseAPI'])
@@ -21,7 +21,6 @@
             
             // keep the reference to remove if the next step fails
             $scope.firebaseUser = firebaseUser;
-            console.log(firebaseUser);
             // Store the user name and bio as a new object
             return Users.newUser(firebaseUser.uid)
               .set({
@@ -44,7 +43,7 @@
               // there was an error, rollback so the user can use the same email
               $scope.firebaseUser.delete()
                 .catch(function(error) {
-                  console.log('Removing the user with errors failed, time to go home...');
+                  //console.log('Removing the user with errors failed, time to go home...');
                   $scope.authError += error;
                 });
 
@@ -57,4 +56,4 @@
 
   }]);
 
-})();
+})(window.angular);

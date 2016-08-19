@@ -1,4 +1,4 @@
-(function () { 
+(function (angular) { 
 'use strict';
 
   angular.module('planner.login', ['ngRoute', 'firebaseAPI'])
@@ -27,7 +27,7 @@
         $scope.error = "";
 
         if(form.$valid) {
-          var request = Auth.$signInWithEmailAndPassword($scope.email, $scope.password)
+          var request = Auth.$signInWithEmailAndPassword($scope.email, $scope.password);
           
           request.then(function(firebaseUser) {
               $location.path("/");
@@ -41,4 +41,4 @@
 
   }]);
 
-})();
+})(window.angular);

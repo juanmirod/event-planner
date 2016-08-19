@@ -105,39 +105,7 @@
       </div>
       </div>
       <div class="form-group" ng-class="{'has-error': form.location.$touched && !form.location.$valid}">
-        <label for="location">
-          Location
-        </label>
-        <input class="form-control"
-               id="location"
-               name="location"
-               places-auto-complete
-               types="['geocode']"
-               size=100
-               type="text" 
-               placeholder="Address or coordinates"
-               ng-model="event.location"
-               required
-               ng-focus="getLocation()"
-               on-place-changed="locationChangedHandler()"
-               autocomplete="address">
-        <span class="help-block" ng-show="located">
-          <span class="text-success"> This should be your current location, is it ok? You can drag the marker to change the coordinates or write an address in the textbox.</span>
-        </span>
-        <span class="help-block" ng-show="form.location.$touched && !form.location.$valid">
-          This field is required. You can use a full address or just a city name.
-        </span>
-        <div class="help-block">
-          <ng-map>
-            <marker centered 
-              position="{{ event.location }}"
-              animation="DROP"
-              draggable="true"
-              on-dragend="locationChangedHandler()"
-              title="{{ event.title }}"> 
-            </marker>
-          </ng-map>
-        </div>
+        <locationinput></locationinput>        
       </div>
       <div class="form-group" ng-class="{'has-error': form.guests.$touched && !form.guests.$valid}">
         <label for="guests">

@@ -1,4 +1,4 @@
-(function () {    
+(function (angular) {    
 'use strict';
 
 // Declare app level module which depends on views, and components
@@ -15,6 +15,8 @@ angular.module('planner', [
     'firebase',
     'firebaseAPI'
   ])
+
+.constant('GeolocationKey', 'AIzaSyA9i-zj4Bpd8cox_jkeiLiJtY5nGWxJZZ0')
 
 .run(["$rootScope", "$location", function($rootScope, $location) {
     $rootScope.$on("$routeChangeError", function(event, next, previous, error) {
@@ -65,4 +67,4 @@ angular.module('planner', [
 
   }]);
 
-})();
+})(window.angular);

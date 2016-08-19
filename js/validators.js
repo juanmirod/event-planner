@@ -1,4 +1,4 @@
-(function () {
+(function (angular) {
 'use strict';
 
    angular.module('planner.validators', [])
@@ -58,4 +58,4 @@
       };
    }); 
 
-})();
+})(window.angular);
