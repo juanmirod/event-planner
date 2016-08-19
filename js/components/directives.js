@@ -4,7 +4,9 @@
   // Template directive used to encapsulate progressbars behaviour
   angular.module('planner.directives', ['ngMap'])
 
-  .directive('formProgressbar', function(){
+  .constant('GeolocationKey', 'AIzaSyA9i-zj4Bpd8cox_jkeiLiJtY5nGWxJZZ0')
+
+  .directive('formProgressbar', [function(){
     return {
       restrict: 'E',
       scope: {
@@ -13,7 +15,7 @@
       },
       templateUrl: 'js/components/progressbar.html'
     };
-  })
+  }])
 
   // Makes autofocus works on route changes without reloading
   .directive('autofocus', [function() {
@@ -30,7 +32,7 @@
       return {
         restrict: 'E',
         templateUrl: 'js/components/locationinput.html',
-        controller: function($scope) {
+        controller: ['$scope', function($scope) {
 
           $scope.triedLocation = false;
           NgMap.getMap().then(function(map) {
@@ -102,7 +104,7 @@
             });
             
           }
-        }
+        }]
     };
   }]);
 

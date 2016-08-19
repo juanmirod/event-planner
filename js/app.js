@@ -16,8 +16,6 @@ angular.module('planner', [
     'firebaseAPI'
   ])
 
-.constant('GeolocationKey', 'AIzaSyA9i-zj4Bpd8cox_jkeiLiJtY5nGWxJZZ0')
-
 .run(["$rootScope", "$location", function($rootScope, $location) {
     $rootScope.$on("$routeChangeError", function(event, next, previous, error) {
       // We can catch the error thrown when the $requireSignIn promise is rejected

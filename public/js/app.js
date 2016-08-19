@@ -18,7 +18,7 @@ angular.module('planner', [
 
 .constant('GeolocationKey', 'AIzaSyA9i-zj4Bpd8cox_jkeiLiJtY5nGWxJZZ0')
 
-.run(["$rootScope", "$location", function($rootScope, $location) {
+.run(['$rootScope', '$location', function($rootScope, $location) {
     $rootScope.$on("$routeChangeError", function(event, next, previous, error) {
       // We can catch the error thrown when the $requireSignIn promise is rejected
       // and redirect the user back to the home page
