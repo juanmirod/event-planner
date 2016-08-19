@@ -11,10 +11,7 @@
         width: '=',
         field: '='
       },
-      templateUrl: 'js/components/progressbar.html',
-      controller: function($scope) {
-        console.log('Loaded');
-      }
+      templateUrl: 'js/components/progressbar.html'
     };
   })
 

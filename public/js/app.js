@@ -203,10 +203,7 @@ angular.module('planner', [
         width: '=',
         field: '='
       },
-      templateUrl: 'js/components/progressbar.html',
-      controller: function($scope) {
-        console.log('Loaded');
-      }
+      templateUrl: 'js/components/progressbar.html'
     };
   })
 
@@ -368,11 +365,11 @@ angular.module('planner', [
 
       }
 
-      function coordinatesToLocation(lat, long) {
+      function coordinatesToLocation(lat, lng) {
 
         $http.get('https://maps.googleapis.com/maps/api/geocode/json',{
           params: {
-            latlng: [lat,long].join(','),
+            latlng: [lat,lng].join(','),
             key: GeolocationKey
           }
         })
@@ -382,7 +379,7 @@ angular.module('planner', [
           if(typeof response.data.results[0] != 'undefined') {
             $scope.event.location = response.data.results[0].formatted_address;  
             $scope.located = true;
-            $scope.map.setCenter({lat: lat, lng: long});
+            $scope.map.setCenter({lat: parseFloat(lat), lng: parseFloat(lng)});
           }
         
         })
