@@ -66,12 +66,24 @@
       
       };
 
+      $scope.checkDates = function() {
+        $scope.enddateError = false;
+        $scope.event.start_date = new Date($scope.event._start_date_form).getTime();
+        $scope.event.end_date = new Date($scope.event._end_date_form).getTime();
+        
+        // Check that enddate is bigger than startdate
+        if($scope.event.end_date < $scope.event.start_date) {
+          $scope.enddateError = true;
+        } 
+
+      }
+
       /*
         Stores the event in firebase
       */
       $scope.submitHandler = function(form) {
 
-        if(form.$valid) {
+        if(form.$valid && !$scope.enddateError) {
 
           // Get the UNIX time of the dates
           $scope.event.start_date = new Date($scope.event._start_date_form).getTime();

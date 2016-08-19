@@ -88,7 +88,7 @@
           This field is required. Maybe your date is not in the right format (yyyy-MM-ddTHH:mm:ss)?
         </span>
       </div>
-      <div class="form-group col-sm-6" ng-class="{'has-error': form.enddate.$touched && !form.enddate.$valid}">
+      <div class="form-group col-sm-6" ng-class="{'has-error': (form.enddate.$touched && !form.enddate.$valid) || enddateError}">
         <label for="enddate">
           End date and time
         </label>
@@ -97,10 +97,14 @@
                id="enddate"
                name="enddate"
                ng-model="event._end_date_form"
-               placeholder="yyyy-MM-ddTHH:mm:ss" 
+               placeholder="yyyy-MM-ddTHH:mm:ss"
+               ng-blur="checkDates()" 
                required>
         <span class="help-block" ng-show="form.enddate.$touched && !form.enddate.$valid">
           This field is required. Maybe your date is not in the right format (yyyy-MM-ddTHH:mm:ss)?
+        </span>
+        <span class="help-block" ng-show="enddateError">
+          End date must be after start date.
         </span>
       </div>
       </div>
