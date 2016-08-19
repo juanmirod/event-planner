@@ -1,0 +1,10 @@
+<div ng-if="!field.$error.required" 
+  class="progress-bar"
+  ng-class="{
+    'progress-bar-success': field.$valid, 
+    'progress-bar-danger': !field.$valid
+  }"
+  style="width: {{ width }}%">
+  <span class="sr-only">Name Completed</span>
+  <span ng-if="!field.$valid" class="sr-only">with errors</span>
+</div>
