@@ -62,6 +62,16 @@ angular.module('planner', [
       $scope.isCollapsed = true;
     });
 
+  }])
+
+  // Makes autofocus works on route changes without reloading
+  .directive('autofocus', [function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element) {
+            element[0].focus();
+        }
+    };
   }]);
 
 })();
