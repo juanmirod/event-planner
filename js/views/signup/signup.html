@@ -8,11 +8,12 @@
       <h3>Just the bare minimun info to get your account</h3>
       <form name="form" class="form" novalidate>
         <div class="form-group" ng-class="{'has-error': form.name.$touched && !form.name.$valid}">
-          <label for="username">Full name
+          <label for="name">Full name
           </label>
           <input  type="text" 
                   class="form-control" 
                   placeholder="your name" 
+                  id="name"
                   name="name"
                   ng-model="user.name"
                   required
@@ -29,6 +30,7 @@
           <input type="email" 
                  class="form-control"
                  placeholder="email@sample.com"
+                 id="email"
                  name="email"
                  ng-model="user.email"
                  required
@@ -45,6 +47,7 @@
           <input type="password" 
                  class="form-control"
                  placeholder="********"
+                 id="password"
                  name="password"
                  ng-model="user.password"
                  password>
@@ -58,6 +61,7 @@
             Bio (optional)
           </label>
           <textarea name="bio"
+                    id="bio"
                     class="form-control"
                     placeholder="You can write about your day job, company, and anything you consider relevant."
                     ng-model="user.bio"

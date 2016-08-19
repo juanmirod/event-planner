@@ -3,6 +3,7 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var replace = require('gulp-replace');
 //var order = require('order');
+var cleanCSS = require('gulp-clean-css');
 var less = require('gulp-less');
 var LessAutoprefix = require('less-plugin-autoprefix');
 var browserSync = require('browser-sync').create();
@@ -46,6 +47,7 @@ gulp.task('bootstrap:copyLess', ['bower'], function() {
 gulp.task('bootstrap:compile', ['bootstrap:copyLess'], function() {
   gulp.src('public/lib/bootstrap/less/bootstrap.less')
     .pipe(less())
+    .pipe(cleanCSS())
     .pipe(gulp.dest('public/lib/bootstrap/dist/css'));
 });
 
@@ -56,6 +58,7 @@ gulp.task('customStyles', function(){
 
   gulp.src('less/**/!(variables).less')
     .pipe(less(['autoprefix']))
+    .pipe(cleanCSS())
     .pipe(gulp.dest('./public/css'));
 
 })
@@ -133,7 +136,9 @@ gulp.task('testrunner', ['tests'], function() {
 gulp.task('server', function(){
 
   browserSync.init({
-    server: './'
+    server: {
+      baseDir: './public/'
+    }
   });
 
 });
