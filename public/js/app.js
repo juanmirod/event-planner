@@ -214,6 +214,8 @@ angular.module('planner', [
     {name: 'Pokemon Championship',  icon: 'glyphicon-star'},
   ])
 
+  .constant('GeolocationKey', 'AIzaSyA9i-zj4Bpd8cox_jkeiLiJtY5nGWxJZZ0')
+
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/create', {
       templateUrl: 'js/views/event/event_form.html',
@@ -238,8 +240,8 @@ angular.module('planner', [
     });
   }])
 
-  .controller('CreateCtrl', ['$scope', 'Events', '$route', '$timeout', 'currentAuth', 'NgMap', 'EventTypes',
-    function($scope, Events, $route, $timeout, currentAuth, NgMap, EventTypes) {
+  .controller('CreateCtrl', ['$scope', 'Events', '$route', '$timeout', '$http', 'currentAuth', 'NgMap', 'EventTypes','GeolocationKey',
+    function($scope, Events, $route, $timeout, $http, currentAuth, NgMap, EventTypes, GeolocationKey) {
 
       // Initialization
       $scope.event = {};
@@ -305,21 +307,23 @@ angular.module('planner', [
         Get the user current location through the browser service
        */
       $scope.getLocation = function askForLocation() {
+        
         if(navigator.geolocation && !$scope.triedLocation) {
+          
           $scope.triedLocation = true;
+          // get the location from browser
           navigator.geolocation.getCurrentPosition(
             function(location){
-              $scope.event.location = '[' + location.coords.latitude + ', ' + location.coords.longitude +']';
-              $scope.located = true;
-              $scope.$apply();
-              $scope.map.setCenter({lat: location.coords.latitude, lng: location.coords.longitude});
+              coordinatesToLocation(location.coords.latitude, location.coords.longitude);
             },
-            function(error){
+            function(error){ 
               $scope.event.location = "Sorry, but we couldn't get your location";
               $scope.$apply();
               console.log("There was an error trying to get the user location: ", error);
             });
+        
         }
+
       };
 
       /*
@@ -329,10 +333,9 @@ angular.module('planner', [
         
         // The user moved the marker
         if(this.position) {
-        
-          $scope.map.setCenter(this.position);
-          $scope.event.location = this.position.toString();
-          $scope.$apply();
+          var coordinateRegex = /-?\d+\.\d+/g;
+          var positionArray = this.position.toString().match(coordinateRegex);
+          coordinatesToLocation(positionArray[0], positionArray[1]);
         
         } else { // The user typed an address
         
@@ -341,6 +344,30 @@ angular.module('planner', [
         
         }
 
+      }
+
+      function coordinatesToLocation(lat, long) {
+
+        $http.get('https://maps.googleapis.com/maps/api/geocode/json',{
+          params: {
+            latlng: [lat,long].join(','),
+            key: GeolocationKey
+          }
+        })
+        .then(function(response){
+
+          // Take the first result, that it is always the most accurate
+          if(typeof response.data.results[0] != 'undefined') {
+            $scope.event.location = response.data.results[0].formatted_address;  
+            $scope.located = true;
+            $scope.map.setCenter({lat: lat, lng: long});
+          }
+        
+        })
+        .catch(function(error){
+          $scope.event.location = 'There was an error checking this location: ' + error.statusText;
+        });
+        
       }
       
       /*
@@ -524,10 +551,13 @@ angular.module('planner', [
 
   .controller('LoginCtrl', ['$rootScope', '$scope', 'Auth', '$location',
     function($rootScope, $scope, Auth, $location) {
+      
       $scope.email = '';
       $scope.password = '';
 
       $scope.submitHandler = function(form) {
+
+        $scope.error = "";
 
         if(form.$valid) {
           var request = Auth.$signInWithEmailAndPassword($scope.email, $scope.password)

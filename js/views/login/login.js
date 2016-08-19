@@ -18,10 +18,13 @@
 
   .controller('LoginCtrl', ['$rootScope', '$scope', 'Auth', '$location',
     function($rootScope, $scope, Auth, $location) {
+      
       $scope.email = '';
       $scope.password = '';
 
       $scope.submitHandler = function(form) {
+
+        $scope.error = "";
 
         if(form.$valid) {
           var request = Auth.$signInWithEmailAndPassword($scope.email, $scope.password)
