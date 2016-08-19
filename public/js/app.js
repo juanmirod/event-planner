@@ -16,9 +16,7 @@ angular.module('planner', [
     'firebaseAPI'
   ])
 
-.constant('GeolocationKey', 'AIzaSyA9i-zj4Bpd8cox_jkeiLiJtY5nGWxJZZ0')
-
-.run(['$rootScope', '$location', function($rootScope, $location) {
+.run(["$rootScope", "$location", function($rootScope, $location) {
     $rootScope.$on("$routeChangeError", function(event, next, previous, error) {
       // We can catch the error thrown when the $requireSignIn promise is rejected
       // and redirect the user back to the home page
@@ -198,16 +196,18 @@ angular.module('planner', [
   // Template directive used to encapsulate progressbars behaviour
   angular.module('planner.directives', ['ngMap'])
 
-  .directive('formProgressbar', function(){
+  .constant('GeolocationKey', 'AIzaSyA9i-zj4Bpd8cox_jkeiLiJtY5nGWxJZZ0')
+
+  .directive('formProgressbar', [function(){
     return {
       restrict: 'E',
       scope: {
         width: '=',
         field: '='
       },
-      templateUrl: 'js/components/progressbar.html'
+      templateUrl: 'public/js/components/progressbar.html'
     };
-  })
+  }])
 
   // Makes autofocus works on route changes without reloading
   .directive('autofocus', [function() {
@@ -223,8 +223,8 @@ angular.module('planner', [
     function($http, GeolocationKey, NgMap){
       return {
         restrict: 'E',
-        templateUrl: 'js/components/locationinput.html',
-        controller: function($scope) {
+        templateUrl: 'public/js/components/locationinput.html',
+        controller: ['$scope', function($scope) {
 
           $scope.triedLocation = false;
           NgMap.getMap().then(function(map) {
@@ -296,7 +296,7 @@ angular.module('planner', [
             });
             
           }
-        }
+        }]
     };
   }]);
 
@@ -318,7 +318,7 @@ angular.module('planner', [
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/create', {
-      templateUrl: 'js/views/event/event_form.html',
+      templateUrl: 'public/js/views/event/event_form.html',
       controller: 'CreateCtrl',
       resolve: {
         // controller will not be loaded until $waitForSignIn resolves
@@ -329,7 +329,7 @@ angular.module('planner', [
     });
 
     $routeProvider.when('/edit/:ref', {
-      templateUrl: 'js/views/event/event_form.html',
+      templateUrl: 'public/js/views/event/event_form.html',
       controller: 'CreateCtrl',
       resolve: {
         // controller will not be loaded until $waitForSignIn resolves
@@ -485,7 +485,7 @@ angular.module('planner', [
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
-      templateUrl: 'js/views/home/home.html',
+      templateUrl: 'public/js/views/home/home.html',
       controller: 'HomeCtrl',
       resolve: {
         // controller will not be loaded until $waitForSignIn resolves
@@ -567,7 +567,7 @@ angular.module('planner', [
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login', {
-      templateUrl: 'js/views/login/login.html',
+      templateUrl: 'public/js/views/login/login.html',
       controller: 'LoginCtrl',
       resolve: {
         // controller will not be loaded until $waitForSignIn resolves
@@ -611,7 +611,7 @@ angular.module('planner', [
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/signup', {
-      templateUrl: 'js/views/signup/signup.html',
+      templateUrl: 'public/js/views/signup/signup.html',
       controller: 'SignupCtrl'
     });
   }])

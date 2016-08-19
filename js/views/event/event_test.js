@@ -20,7 +20,6 @@ describe('planner.event module', function() {
     $rootScope = $injector.get('$rootScope');
     $scope = $rootScope.$new();
     $controller = $injector.get('$controller');
-    var ngMap = $injector.get('NgMap');
     $route = {
       current: {
         params: {
@@ -31,7 +30,7 @@ describe('planner.event module', function() {
 
     currentAuth = {uid: 1};
       
-    $controller('CreateCtrl', {'$scope': $scope, 'currentAuth': currentAuth, '$route': $route, 'NgMap': ngMap});
+    $controller('CreateCtrl', {'$scope': $scope, 'currentAuth': currentAuth, '$route': $route});
     form = {$valid: true};
     $scope.event = event;
 

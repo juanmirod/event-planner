@@ -5,7 +5,7 @@
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
-      templateUrl: 'js/views/home/home.html',
+      templateUrl: 'public/js/views/home/home.html',
       controller: 'HomeCtrl',
       resolve: {
         // controller will not be loaded until $waitForSignIn resolves

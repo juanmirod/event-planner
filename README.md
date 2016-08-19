@@ -32,14 +32,6 @@ To run build the js and run the server:
 ```
 $> gulp build
 $> gulp server
-``` 
-
-You will need to add 'public/' to the browser address because I am using the 'base' tag to serve the 
-application from github pages, I didn't find a workaround for this yet, sorry. So the path to see the 
-application should be:
-
-```
-localhost:3000/public/
 ```
 
 To run the server in development mode, watching for changes in js and css just run gulp default task:

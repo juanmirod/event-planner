@@ -13,7 +13,7 @@
         width: '=',
         field: '='
       },
-      templateUrl: 'js/components/progressbar.html'
+      templateUrl: 'public/js/components/progressbar.html'
     };
   }])
 
@@ -31,7 +31,7 @@
     function($http, GeolocationKey, NgMap){
       return {
         restrict: 'E',
-        templateUrl: 'js/components/locationinput.html',
+        templateUrl: 'public/js/components/locationinput.html',
         controller: ['$scope', function($scope) {
 
           $scope.triedLocation = false;

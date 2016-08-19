@@ -5,7 +5,7 @@
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/signup', {
-      templateUrl: 'js/views/signup/signup.html',
+      templateUrl: 'public/js/views/signup/signup.html',
       controller: 'SignupCtrl'
     });
   }])

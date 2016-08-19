@@ -5,7 +5,7 @@
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login', {
-      templateUrl: 'js/views/login/login.html',
+      templateUrl: 'public/js/views/login/login.html',
       controller: 'LoginCtrl',
       resolve: {
         // controller will not be loaded until $waitForSignIn resolves

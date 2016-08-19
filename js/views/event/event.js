@@ -15,7 +15,7 @@
 
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/create', {
-      templateUrl: 'js/views/event/event_form.html',
+      templateUrl: 'public/js/views/event/event_form.html',
       controller: 'CreateCtrl',
       resolve: {
         // controller will not be loaded until $waitForSignIn resolves
@@ -26,7 +26,7 @@
     });
 
     $routeProvider.when('/edit/:ref', {
-      templateUrl: 'js/views/event/event_form.html',
+      templateUrl: 'public/js/views/event/event_form.html',
       controller: 'CreateCtrl',
       resolve: {
         // controller will not be loaded until $waitForSignIn resolves

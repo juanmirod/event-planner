@@ -86,9 +86,9 @@ gulp.task('buildjs', function() {
     .pipe(gulp.dest('./public/js'));
 
   // copy dev.html to index.html
-  gulp.src('./public/dev.html')
+  gulp.src('dev.html')
     .pipe(concat('index.html'))
-    .pipe(gulp.dest('./public/'));
+    .pipe(gulp.dest('./'));
 
   gulp.src([
     'bower_components/firebase/firebase.js',
@@ -137,7 +137,7 @@ gulp.task('server', function(){
 
   browserSync.init({
     server: {
-      baseDir: './public/'
+      baseDir: './'
     }
   });
 
@@ -173,6 +173,7 @@ gulp.task('build', ['styles'], function(){
   gulp.src('js/**/*.html')
     .pipe(gulp.dest('./public/js'));
 
+
   gulp.src([
     'bower_components/firebase/firebase.js',
     'bower_components/angular/angular.min.js',
@@ -185,8 +186,13 @@ gulp.task('build', ['styles'], function(){
     .pipe(concat('vendor.min.js'))
     .pipe(gulp.dest('./public/js'));
 
+  // copy dev.html to index.html
+  gulp.src('dev.html')
+    .pipe(concat('index.html'))
+    .pipe(gulp.dest('./'));
+  
   // modify index to use minified files
-  gulp.src('./public/index.html')
+  gulp.src('./index.html')
     .pipe(replace('vendor.js', 'vendor.min.js'))
     .pipe(replace('app.js', 'app.min.js'))
     .pipe(gulp.dest('./public/'))
