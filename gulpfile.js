@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var replace = require('gulp-replace');
-//var order = require('order');
 var cleanCSS = require('gulp-clean-css');
 var less = require('gulp-less');
 var LessAutoprefix = require('less-plugin-autoprefix');
@@ -11,15 +10,7 @@ var autoprefix = new LessAutoprefix({ browsers: ['last 2 versions'] });
 var mainBowerFiles = require('main-bower-files');
 var jasmine = require('gulp-jasmine-phantom');
 
-
-
-/*
-  Reloads the server
-  */
-gulp.task('reload', function(){
-    browserSync.reload();
-});
-
+//////////////////////////// STYLES ///////////////////////////////////////////////
 /*
   Copies bower main files to the public folder
   */
@@ -30,8 +21,6 @@ gulp.task('bower', function() {
     .pipe(gulp.dest('public/lib'));
   
 });
-
-//////////////////////////// STYLES ///////////////////////////////////////////////
 
 /*
   Copy our custom variables.less file to the bootstrap folder in public
@@ -61,7 +50,7 @@ gulp.task('customStyles', function(){
     .pipe(cleanCSS())
     .pipe(gulp.dest('./public/css'));
 
-})
+});
 
 /*
   Run the less compilation, both bootstrap and application custom files 
@@ -76,7 +65,7 @@ gulp.task('styles', ['bootstrap:compile', 'customStyles']);
   and one for the app (app.js). It also copies all html templates to the public folder to 
   be able to serve them.
   */
-gulp.task('buildjs', function() {
+gulp.task('js:dev', function() {
 
   gulp.src('js/**/!(*_test).js')
     .pipe(concat('app.js'))
@@ -104,10 +93,38 @@ gulp.task('buildjs', function() {
 
 });
 
+
+// Build for production, using minified files
+gulp.task('js:dist', function() {
+
+  gulp.src('js/**/!(*_test).js')
+    .pipe(concat('app.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('./public/js'));
+
+  gulp.src('js/**/*.html')
+    .pipe(gulp.dest('./public/js'));
+
+
+  gulp.src([
+    'bower_components/firebase/firebase.js',
+    'bower_components/angular/angular.min.js',
+    'bower_components/angular-animate/angular-animate.min.js',
+    'bower_components/angular-route/angular-route.min.js',
+    'bower_components/angularfire/dist/angularfire.min.js',
+    'bower_components/ngmap/build/scripts/ng-map.min.js',
+    'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'
+    ])
+    .pipe(concat('vendor.min.js'))
+    .pipe(gulp.dest('./public/js'));
+
+});
+
+//////////////////////////// TESTS ////////////////////////////////////////
 /*
   Run the tests suite once
   */
-gulp.task('tests', ['buildjs'], function () {
+gulp.task('tests', ['js:dev'], function () {
   
   gulp.src([
     'public/js/vendor.js',
@@ -132,8 +149,10 @@ gulp.task('testrunner', ['tests'], function() {
 });
 
 ///////////////////////////// LIVE RELOADING ////////////////////////////////////////
-
-gulp.task('server', function(){
+/*
+  Launch the server
+*/
+gulp.task('server', function() {
 
   browserSync.init({
     server: {
@@ -143,15 +162,24 @@ gulp.task('server', function(){
 
 });
 
+/*
+  Reloads the server
+  */
+gulp.task('reload', function() {
+    browserSync.reload();
+});
+
 /* 
-  The default task runs browserSync server and watches for changes 
+  Runs browserSync server and watches for changes 
   in css, js or html to reload the browser.
   */
-gulp.task('default', ['server', 'styles', 'buildjs'], function() {
+
+// Development
+gulp.task('serve', ['server', 'styles', 'js:dev'], function() {
 
   gulp.watch('less/**/*.less', ['styles']);
 
-  gulp.watch('js/**/*.*', ['buildjs']);
+  gulp.watch('js/**/*.*', ['js:dev']);
 
   gulp.watch([
     'public/lib/bootstrap/dist/css/*.css',
@@ -162,31 +190,26 @@ gulp.task('default', ['server', 'styles', 'buildjs'], function() {
 
 });
 
-//////////////////////////////// BUILD FOR PRODUCTION /////////////////////////////////////
-gulp.task('build', ['styles'], function(){
+// Minified files for production
+gulp.task('serve:dist', ['server', 'build'], function() {
 
-  gulp.src('js/**/!(*_test).js')
-    .pipe(concat('app.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('./public/js'));
+  gulp.watch('less/**/*.less', ['styles']);
 
-  gulp.src('js/**/*.html')
-    .pipe(gulp.dest('./public/js'));
+  gulp.watch('js/**/*.*', ['build']);
 
+  gulp.watch([
+    'public/lib/bootstrap/dist/css/*.css',
+    'public/js/**/*.js',
+    'public/js/**/*.html',
+    'public/index.html'
+    ], ['reload']);
 
-  gulp.src([
-    'bower_components/firebase/firebase.js',
-    'bower_components/angular/angular.min.js',
-    'bower_components/angular-animate/angular-animate.min.js',
-    'bower_components/angular-route/angular-route.min.js',
-    'bower_components/angularfire/dist/angularfire.min.js',
-    'bower_components/ngmap/build/scripts/ng-map.min.js',
-    'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'
-    ])
-    .pipe(concat('vendor.min.js'))
-    .pipe(gulp.dest('./public/js'));
+});
 
-  // copy dev.html to index.html
+///////////////////// BUILD ONCE FOR PRODUCTION//////////////////////
+gulp.task('build', ['styles', 'js:dist'], function() {
+
+	// copy dev.html to index.html
   gulp.src('dev.html')
     .pipe(concat('index.html'))
     .pipe(gulp.dest('./'));
@@ -195,5 +218,6 @@ gulp.task('build', ['styles'], function(){
   gulp.src('./index.html')
     .pipe(replace('vendor.js', 'vendor.min.js'))
     .pipe(replace('app.js', 'app.min.js'))
-    .pipe(gulp.dest('./public/'))
+    .pipe(gulp.dest('./'))
+
 });
