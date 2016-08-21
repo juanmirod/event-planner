@@ -42,6 +42,7 @@
 
       // Initialization
       $scope.event = {};
+      $scope.eventTypes = EventTypes;
       
       // If we get the ref in the route, get the event
       if(typeof($route.current.params.ref) != 'undefined') {
@@ -59,6 +60,7 @@
         EventTypes.some(function(eventType){
           if(eventType.name == event.type) {
             icon = eventType.icon;
+            return true;
           }
         });
 
@@ -66,11 +68,22 @@
       
       };
 
+      /*
+        Checks extra date validation: Apart from correctly formatted,
+        events can not happen in the past and they must end after they started.
+      */
       $scope.checkDates = function() {
+
         $scope.enddateError = false;
+        $scope.startdateError = false;
+
         $scope.event.start_date = new Date($scope.event._start_date_form).getTime();
         $scope.event.end_date = new Date($scope.event._end_date_form).getTime();
         
+        if($scope.event.start_date < Date.now()) {
+          $scope.startdateError = true;
+        }
+
         // Check that enddate is bigger than startdate
         if($scope.event.end_date < $scope.event.start_date) {
           $scope.enddateError = true;
