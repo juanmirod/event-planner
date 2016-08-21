@@ -30,14 +30,13 @@ $> bower install
 To run build the js and run the server:
 
 ```
-$> gulp build
-$> gulp server
+$> gulp serve:dist
 ```
 
 To run the server in development mode, watching for changes in js and css just run gulp default task:
 
 ```
-$> gulp
+$> gulp serve
 ```
 
 Enjoy!
