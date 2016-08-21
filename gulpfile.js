@@ -218,6 +218,6 @@ gulp.task('build', ['styles', 'js:dist'], function() {
   gulp.src('./index.html')
     .pipe(replace('vendor.js', 'vendor.min.js'))
     .pipe(replace('app.js', 'app.min.js'))
-    .pipe(gulp.dest('./'))
+    .pipe(gulp.dest('./'));
 
 });
