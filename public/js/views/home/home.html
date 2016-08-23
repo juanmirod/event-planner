@@ -41,7 +41,7 @@
               <br>
               <small>Created: {{ event.created_at | date : 'medium' }}</small>
             </h4>
-            <button ng-click="toggleMap(event)" class="btn btn-xs btn-info">Location: {{ event.location }}</button>
+            <button ng-click="toggleMap(event)" class="btn btn-xs btn-info btn-map">Location: {{ event.location }}</button>
             <hr>
             <div ng-if="event._showMap" aria-hidden="true">
                 <ng-map center="{{ event.location }}" zoom="13">
