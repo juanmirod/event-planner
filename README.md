@@ -2,11 +2,13 @@
 
 This is a sample project that implements some forms for authentication and event creation.
 The app is responsive, all the forms offer feedback to the user about the input and they show
-user friendly error messages when required. Input is autocompleted when posible and html5 inputs and geolocation
-service are used to help the user fill in the required inputs.
+user friendly error messages when required. Input is autocompleted when posible and html5 inputs and geolocation service are used to help the user fill in the required inputs.
 
-The application is built with AngularJS + Bootstrap, Gulp for the build process, test runner and development mode
-and Firebase Authentication and database services for backend. 
+The application is built with:
+
+* AngularJS + Bootstrap 
+* Gulp for build process, test runner and development mode (live-reloading)
+* Firebase Authentication and database services for backend 
 
 ## Requirements
 

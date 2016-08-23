@@ -84,8 +84,8 @@
           $scope.startdateError = true;
         }
 
-        // Check that enddate is bigger than startdate
-        if($scope.event.end_date < $scope.event.start_date) {
+        // Check that enddate is bigger than startdate + 5 minutes (stand-up meeting :))
+        if($scope.event.end_date < ($scope.event.start_date + 1000*60*5)) {
           $scope.enddateError = true;
         } 
 

@@ -44,9 +44,33 @@ describe('planner.event module', function() {
     
   });
 
-  it('should check that the dates are correctly formatted', function(){
+  it('should show an error when the start date is in the past', function() {
+     
+    $scope.event._start_date_form = (new Date(Date.now()-1000)).toISOString();
+    $scope.checkDates();
+    expect($scope.startdateError).toBe(true);
 
   });
+
+
+  it('should show an error when the end date is less than 5 minutes after the start date', function(){
+
+    $scope.event._start_date_form = (new Date(Date.now() + 1000)).toISOString();
+    $scope.event._end_date_form = (new Date(Date.now() + 2000)).toISOString();
+    $scope.checkDates();
+    expect($scope.enddateError).toBe(true);
+
+  });
+
+  it('should consider valid the dates if the start date is in the future and the end date is at least 5 minutes after the start date', function(){
+
+    $scope.event._start_date_form = (new Date(Date.now() + 1000)).toISOString();
+    $scope.event._end_date_form = (new Date(Date.now() + 1000*60*5 + 1000)).toISOString();
+    $scope.checkDates();
+    expect($scope.startdateError).toBe(false);
+    expect($scope.enddateError).toBe(false);
+
+  })
 
   it('should add created_at value to the event on submit', function(){
   

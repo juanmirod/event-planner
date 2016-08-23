@@ -1,6 +1,8 @@
 describe('planner.login module', function() {
 'use strict';
 
+  var $controller, $rootScope, $scope, $location, Auth;
+
   beforeEach(function(){
     module('planner.login');
 
@@ -18,8 +20,6 @@ describe('planner.login module', function() {
     });
 
   });
-
-  var $controller, $rootScope, $scope, $location, Auth;
 
   beforeEach(function(){
   
